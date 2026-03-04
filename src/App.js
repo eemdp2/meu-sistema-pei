@@ -1,10 +1,30 @@
-// Configurações Globais
+// --- CONFIGURAÇÕES GLOBAIS ---
 const SENHA_AEE = "1234";
 let AlunoAtual = "";
-const disciplinas = ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "LÍNGUA INGLESA", "MATEMÁTICA", "HISTÓRIA", "GEOGRAFIA", "CIÊNCIAS"];
+
+// Estrutura de Áreas de Conhecimento solicitada
+const areasConhecimento = [
+    { 
+        titulo: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", 
+        disciplinas: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "LÍNGUA INGLESA"] 
+    },
+    { 
+        titulo: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", 
+        disciplinas: ["MATEMÁTICA"] 
+    },
+    { 
+        titulo: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", 
+        disciplinas: ["GEOGRAFIA", "HISTÓRIA"] 
+    },
+    { 
+        titulo: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", 
+        disciplinas: ["CIÊNCIAS"] 
+    }
+];
+
 const camposAEE = ['nome','freq','alergia','nasc','ano','def','pais','av_inicial','info','potencial','dificuldade','docentes','orient_familia','apoio','orient_outros'];
 
-// Controle de Interface (Acordeão e Bloqueio)
+// --- FUNÇÕES DE INTERFACE ---
 function toggleAEE() {
     document.getElementById('contentAEE').classList.toggle('content-expand');
     document.getElementById('arrowAEE').classList.toggle('rotate-180');
@@ -18,7 +38,7 @@ function desbloquearAEE() {
     }
 }
 
-// Lógica de Dados (Estudante e Disciplinas)
+// --- LÓGICA DE DADOS ---
 function trocarEstudante() {
     AlunoAtual = document.getElementById('selectEstudante').value;
     if(!AlunoAtual) return;
@@ -69,68 +89,66 @@ function salvarMateria() {
     alert(`✅ Planejamento de ${materia} salvo!`);
 }
 
-// FUNÇÃO DE EXPORTAÇÃO PDF ORGANIZADA (SEÇÕES 1 A 6)
+// --- EXPORTAÇÃO PDF (AEE 1-6 + ÁREAS AGRUPADAS) ---
 async function exportarPDF() {
-    if(!AlunoAtual) return alert("Por favor, selecione um estudante primeiro!");
+    if(!AlunoAtual) return alert("Por favor, selecione um estudante!");
     
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
     const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
 
-    // --- CABEÇALHO OFICIAL (Logo e Títulos) ---
+    // Cabeçalho Oficial
     const logoImg = document.querySelector('header img');
     if (logoImg) {
         try {
             const canvas = document.createElement("canvas");
-            canvas.width = logoImg.naturalWidth;
-            canvas.height = logoImg.naturalHeight;
+            canvas.width = logoImg.naturalWidth; canvas.height = logoImg.naturalHeight;
             canvas.getContext("2d").drawImage(logoImg, 0, 0);
             doc.addImage(canvas.toDataURL("image/png"), 'PNG', 85, 10, 40, 18);
-        } catch(e) { console.error("Erro no logo"); }
+        } catch(e) {}
     }
 
     doc.setFontSize(10).setFont('helvetica', 'bold').text("GOVERNO DO ESTADO DE MATO GROSSO", 105, 32, {align: 'center'});
     doc.setFontSize(8).text("SECRETARIA DE ESTADO DE EDUCAÇÃO - SEDUC", 105, 36, {align: 'center'});
     doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(15, 42, 195, 42);
-    doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - 2026`, 105, 50, {align: 'center'});
+    doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, 105, 52, {align: 'center'});
 
-    // --- SEÇÃO 1: IDENTIFICAÇÃO ---
+    // 1 - IDENTIFICAÇÃO
     doc.autoTable({
-        startY: 58,
-        head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 4, styles: {fillColor: [31, 56, 100], halign: 'center'}}]],
+        startY: 60,
+        head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100], halign: 'center'}}]],
         body: [
-            [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 4}],
-            [{content: `Frequência na Unidade Escolar: ${aee.freq || '-'}`, colSpan: 4}],
-            [{content: `Intolerância Alimentar / Alergia: ${aee.alergia || 'Não declarada'}`, colSpan: 4}],
-            [`Data de Nascimento:\n${aee.nasc || '-'}`, `Ano de escolaridade:\n${aee.ano || '-'}`, {content: `Deficiência ou condição:\n${aee.def || '-'}`, colSpan: 2}],
-            [{content: `Nome dos pais ou responsável legal: ${aee.pais || '-'}`, colSpan: 4}]
+            [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 3}],
+            [{content: `Frequência na Unidade Escolar: ${aee.freq || '-'}`}, {content: `( ) Infrequente    ( ) Regular    ( X ) Assíduo`, colSpan: 2}],
+            [{content: `Intolerância Alimentar / Alergia: ${aee.alergia || 'Não'}`, colSpan: 3}],
+            [`Data de Nascimento:\n${aee.nasc || '-'}`, `Ano de escolaridade:\n${aee.ano || '-'}`, `Deficiência ou condição:\n${aee.def || '-'}`],
+            [{content: `Nome dos pais ou responsável legal: ${aee.pais || '-'}`, colSpan: 3}]
         ],
-        theme: 'grid', styles: {fontSize: 7, cellPadding: 2}, headStyles: {fontStyle: 'bold'}
+        theme: 'grid', styles: {fontSize: 7.5, cellPadding: 2}
     });
 
-    // --- SEÇÃO 2 E 3: CALENDÁRIO E BIO ---
+    // 2 E 3 - CALENDÁRIO E BIO
     doc.autoTable({
         startY: doc.lastAutoTable.finalY + 5,
-        head: [[{content: '2 - CALENDÁRIO DE EXECUÇÃO DO PEI', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        head: [[{content: '2 – CALENDÁRIO DE EXECUÇÃO DO PEI', colSpan: 4, styles: {fillColor: [31, 56, 100]}}]],
         body: [
-            [{content: 'Delimitação Temporal: BIMESTRAL - 1º Bimestre', styles: {fontStyle: 'bold', cellWidth: 80}}, 
-             {content: `Avaliação Inicial:\n${aee.av_inicial || '-'}`, rowSpan: 2}],
-            [`Início: 19/01/2026\n1ª Revisão: 02/02/2026\n2ª Revisão: 22/04/2026`]
+            [{content: 'Delimitação Temporal: BIMESTRAL - 1º Bimestre', styles: {fontStyle: 'bold'}}, `Início:\n19/01/2026`, `1ª Revisão:\n02/02/2026`, {content: `Avaliação inicial:\n${aee.av_inicial || '-'}`, rowSpan: 2}],
+            [{content: '', styles: {cellPadding: 0}}, '', `2ª Revisão:\n22/04/2026`, '']
         ],
         theme: 'grid', styles: {fontSize: 7}
     });
 
     doc.autoTable({
         startY: doc.lastAutoTable.finalY,
-        head: [[{content: '3 - Informações sobre o/a estudante', styles: {fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold'}}]],
+        head: [[{content: '3 – Informações sobre o/a estudante', styles: {fillColor: [240, 240, 240], textColor: [0, 0, 0]}}]],
         body: [[aee.info || '-']],
         theme: 'grid', styles: {fontSize: 7}
     });
 
-    // --- SEÇÃO 4 E 5: DOCENTES E ORIENTAÇÃO ---
+    // 4 E 5 - DOCENTES E ORIENTAÇÃO
     doc.autoTable({
         startY: doc.lastAutoTable.finalY + 5,
-        head: [[{content: '4 - IDENTIFICAÇÃO DOS DOCENTES', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        head: [[{content: '4 – IDENTIFICAÇÃO DOS DOCENTES', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
         body: [
             [{content: `Nomes dos PROFESSORES REGENTES:\n${aee.docentes || '-'}`, colSpan: 2}],
             [`Professor(a) AEE/SRM: ${aee.apoio || '-'}`, `Apoio Pedagógico Especializado: -`]
@@ -140,49 +158,54 @@ async function exportarPDF() {
 
     doc.autoTable({
         startY: doc.lastAutoTable.finalY,
-        head: [[{content: '5 - ORIENTAÇÃO COLABORATIVA', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        head: [[{content: '5 – ORIENTAÇÃO COLABORATIVA', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
         body: [
-            [{content: `Família:\n${aee.orient_familia || '-'}`, styles: {cellWidth: 90}}, 
-             {content: `Orientações de outros profissionais:\n${aee.orient_outros || '-'}`, styles: {cellWidth: 90}}]
+            [{content: `Família:\n${aee.orient_familia || '-'}`, styles: {cellWidth: 90}}, {content: `Outros Profissionais:\n${aee.orient_outros || '-'}`, styles: {cellWidth: 90}}]
         ],
         theme: 'grid', styles: {fontSize: 7}
     });
 
-    // --- SEÇÃO 6: CARACTERIZAÇÃO ---
+    // 6 - CARACTERIZAÇÃO
     doc.autoTable({
         startY: doc.lastAutoTable.finalY + 5,
-        head: [[{content: '6 - CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        head: [[{content: '6 – CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
         body: [
-            [{content: 'Potencialidades:', styles: {fontStyle: 'bold', textColor: [0, 100, 0]}}, 
-             {content: 'Dificuldades:', styles: {fontStyle: 'bold', textColor: [150, 0, 0]}}],
+            [{content: 'Potencialidades:', styles: {fontStyle: 'bold'}}, {content: 'Dificuldades:', styles: {fontStyle: 'bold'}}],
             [{content: aee.potencial || '-'}, {content: aee.dificuldade || '-'}]
         ],
         theme: 'grid', styles: {fontSize: 7}
     });
 
-    // --- DISCIPLINAS (Nova Página em Paisagem) ---
+    // --- PÁGINAS DE REGÊNCIA (MODO PAISAGEM) ---
     doc.addPage('a4', 'l');
-    doc.setFontSize(11).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO ADAPTADO", 148, 15, {align: 'center'});
+    doc.setFontSize(12).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO POR ÁREAS DE CONHECIMENTO", 148, 15, {align: 'center'});
     
     let curY = 25;
-    disciplinas.forEach(disc => {
-        const dadosDisc = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`));
-        if (dadosDisc && dadosDisc.u) {
+
+    areasConhecimento.forEach(area => {
+        if (curY > 180) { doc.addPage('a4', 'l'); curY = 20; }
+        doc.setFillColor(230, 230, 230);
+        doc.rect(14, curY, 269, 7, 'F');
+        doc.setFontSize(9).text(area.titulo, 16, curY + 5);
+        curY += 10;
+
+        area.disciplinas.forEach(disc => {
+            const dados = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`)) || {u:'-', o:'-', ht:'-', hp:'-', mt:'-', av:'-'};
             if (curY > 170) { doc.addPage('a4', 'l'); curY = 20; }
-            doc.setFontSize(9).setFont(undefined, 'bold').text(disc, 14, curY);
+            doc.setFontSize(8).setFont(undefined, 'bold').text(disc, 14, curY);
             doc.autoTable({
                 startY: curY + 2,
                 head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
-                body: [[dadosDisc.u, dadosDisc.o, dadosDisc.ht, dadosDisc.hp, dadosDisc.mt, dadosDisc.av]],
-                theme: 'grid', styles: {fontSize: 7}, headStyles: {fillColor: [40, 40, 40]}
+                body: [[dados.u, dados.o, dados.ht, dados.hp, dados.mt, dados.av]],
+                theme: 'grid', styles: {fontSize: 6.5}, headStyles: {fillColor: [40, 40, 40]}
             });
-            curY = doc.lastAutoTable.finalY + 10;
-        }
+            curY = doc.lastAutoTable.finalY + 8;
+        });
+        curY += 5;
     });
 
-    // --- ASSINATURAS FINAIS ---
-    if (curY > 150) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
-    doc.setFontSize(8).text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, curY);
+    // Assinaturas
+    if (curY > 160) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
     doc.line(20, curY + 20, 90, curY + 20); doc.text("Professor(a) AEE", 55, curY + 24, {align: 'center'});
     doc.line(110, curY + 20, 180, curY + 20); doc.text("Professor(a) Regente", 145, curY + 24, {align: 'center'});
     doc.line(200, curY + 20, 270, curY + 20); doc.text("Coordenação Pedagógica", 235, curY + 24, {align: 'center'});
