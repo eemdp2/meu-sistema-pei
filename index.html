@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema PEI - EEM Dom Pedro II</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
+        <header class="bg-blue-900 text-white p-6 text-center">
+            <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
+            <p class="text-sm">Plano Educacional Individualizado (PEI) - Modelo Oficial</p>
+        </header>
+
+        <main class="p-6 space-y-8">
+            <section class="border-b pb-6">
+                <h2 class="bg-gray-200 p-2 font-bold mb-4 italic">1 - IDENTIFICAÇÃO DO ESTUDANTE</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p><strong>Nome:</strong> VICTOR MOISES HAUBRICHT </p>
+                    <p><strong>Turma:</strong> 6º ANO D </p>
+                    <p><strong>Data de Nasc.:</strong> 27/06/14 </p>
+                    <p><strong>Frequência:</strong> Assíduo </p>
+                </div>
+            </section>
+
+            <section class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                <h2 class="text-lg font-bold text-blue-900 mb-4">Área de Lançamento</h2>
+                <div class="grid gap-4">
+                    <div>
+                        <label class="block font-semibold mb-1">Selecione sua Disciplina:</label>
+                        <select id="materia" class="w-full p-2 border rounded">
+                            <option value="LÍNGUA PORTUGUESA">Língua Portuguesa</option>
+                            <option value="MATEMÁTICA">Matemática</option>
+                            <option value="GEOGRAFIA">Geografia</option>
+                            <option value="ARTE">Arte</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Habilidades Acadêmicas (Estudante PAEDE):</label>
+                        <textarea id="habilidades" class="w-full p-2 border rounded h-32" placeholder="Descreva as adaptações..."></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="salvar()" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Salvar Dados</button>
+                        <button onclick="gerarPDF()" class="bg-blue-800 text-white px-6 py-2 rounded font-bold hover:bg-blue-900">Gerar PDF Unificado</button>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="font-bold mb-2 italic">Acompanhamento de Preenchimento:</h2>
+                <div id="statusList" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const materiasArr = ["LÍNGUA PORTUGUESA", "MATEMÁTICA", "GEOGRAFIA", "ARTE", "HISTÓRIA", "CIÊNCIAS"];
+
+        function carregarStatus() {
+            const lista = document.getElementById('statusList');
+            lista.innerHTML = '';
+            materiasArr.forEach(m => {
+                const preenchido = localStorage.getItem(`dados_${m}`);
+                lista.innerHTML += `
+                    <div class="p-2 border rounded ${preenchido ? 'bg-green-100 border-green-300' : 'bg-red-50 border-red-200'} text-xs">
+                        <strong>${m}:</strong> ${preenchido ? '✅ OK' : '❌ Pendente'}
+                    </div>`;
+            });
+        }
+
+        function salvar() {
+            const m = document.getElementById('materia').value;
+            const h = document.getElementById('habilidades').value;
+            if(!h) return alert("Preencha as habilidades!");
+            localStorage.setItem(`dados_${m}`, h);
+            alert(`Lançamento de ${m} salvo!`);
+            carregarStatus();
+        }
+
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Layout conforme o modelo [cite: 3, 5, 6]
+            doc.setFontSize(10);
+            doc.text("UNIDADE ESCOLAR: ESCOLA ESTADUAL MILITAR DOM PEDRO II", 10, 10);
+            doc.setFontSize(14);
+            doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO (PEI)", 105, 20, { align: "center" });
+            
+            doc.setFontSize(10);
+            doc.text("1 - IDENTIFICAÇÃO DO ESTUDANTE", 10, 30);
+            doc.text("NOME: VICTOR MOISES HAUBRICHT", 10, 36);
+            doc.text("TURMA: 6º ANO D", 120, 36);
+            
+            // Gerar Tabelas de Disciplinas [cite: 5, 6, 7]
+            let currentY = 45;
+            materiasArr.forEach(m => {
+                const dado = localStorage.getItem(`dados_${m}`) || "Não preenchido pelo professor regente.";
+                
+                doc.autoTable({
+                    startY: currentY,
+                    head: [[m, 'HABILIDADES ACADÊMICAS PARA O ESTUDANTE PAEDE']],
+                    body: [['Detalhamento:', dado]],
+                    theme: 'grid',
+                    headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
+                    styles: { fontSize: 8 }
+                });
+                currentY = doc.lastAutoTable.finalY + 5;
+            });
+
+            // Rodapé de Assinaturas [cite: 11, 12, 13]
+            if (currentY > 250) { doc.addPage(); currentY = 20; }
+            doc.text("__________________________________________", 10, currentY + 20);
+            doc.text("COORDENAÇÃO PEDAGÓGICA", 10, currentY + 25);
+            doc.text("__________________________________________", 110, currentY + 20);
+            doc.text("SALA DE RECURSOS (AEE)", 110, currentY + 25);
+
+            doc.save("PEI_VICTOR_MOISES.pdf");
+        }
+
+        carregarStatus();
+    </script>
+</body>
+</html>
