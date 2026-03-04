@@ -16,33 +16,33 @@
 
     <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg">
         <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
-        <p class="text-xs mt-1">Plano Educacional Individualizado (PEI) - Victor Moises Haubricht [cite: 3]</p>
+        <p class="text-xs mt-1">Plano Educacional Individualizado (PEI) - Victor Moises Haubricht</p>
     </header>
 
     <main class="container mx-auto p-4 max-w-6xl space-y-6">
         <section class="bg-white p-6 rounded-xl shadow-md border">
             <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
                 <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border rounded-lg font-bold text-blue-900 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-80">
-                    <optgroup label="I. LINGUAGENS [cite: 5]">
+                    <optgroup label="I. LINGUAGENS">
                         <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
                         <option value="ARTE">ARTE</option>
                         <option value="EDUCAÇÃO FÍSICA">EDUCAÇÃO FÍSICA</option>
                         <option value="INGLÊS">INGLÊS</option>
                     </optgroup>
-                    <optgroup label="II. MATEMÁTICA [cite: 6]">
+                    <optgroup label="II. MATEMÁTICA">
                         <option value="MATEMÁTICA">MATEMÁTICA</option>
                     </optgroup>
-                    <optgroup label="III. CIÊNCIAS HUMANAS [cite: 7]">
+                    <optgroup label="III. CIÊNCIAS HUMANAS">
                         <option value="GEOGRAFIA">GEOGRAFIA</option>
                         <option value="HISTÓRIA">HISTÓRIA</option>
                     </optgroup>
-                    <optgroup label="IV. CIÊNCIAS DA NATUREZA [cite: 8]">
+                    <optgroup label="IV. CIÊNCIAS DA NATUREZA">
                         <option value="CIÊNCIAS">CIÊNCIAS</option>
                     </optgroup>
                 </select>
                 <div class="flex gap-2 w-full md:w-auto">
-                    <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all">SALVAR</button>
-                    <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-all">GERAR PDF FINAL</button>
+                    <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700">SALVAR</button>
+                    <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white px-6 py-2 rounded-lg font-bold hover:bg-black">GERAR PDF FINAL</button>
                 </div>
             </div>
 
@@ -55,50 +55,33 @@
                 <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação</label><textarea id="av" class="w-full p-3 border rounded-lg h-32 text-sm outline-none"></textarea></div>
             </div>
         </section>
-
         <section id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2"></section>
     </main>
 
     <script>
         const areas = [
-            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS [cite: 5]", d: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "INGLÊS"] },
-            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS [cite: 6]", d: ["MATEMÁTICA"] },
-            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS [cite: 7]", d: ["GEOGRAFIA", "HISTÓRIA"] },
-            { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS [cite: 8]", d: ["CIÊNCIAS"] }
+            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", d: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "INGLÊS"] },
+            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", d: ["MATEMÁTICA"] },
+            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", d: ["GEOGRAFIA", "HISTÓRIA"] },
+            { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", d: ["CIÊNCIAS"] }
         ];
 
-        // Dados Iniciais do documento VICTOR MOISES HAUBRICHT [cite: 3]
         const dadosBase = {
             "LÍNGUA PORTUGUESA": { 
-                u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico [cite: 5]", 
-                o: "Gênero Fábula; Substantivo; Artigo e Numeral; Adjetivos; Concordância Nominal [cite: 5]", 
-                ht: "(EF69LP47)(EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04) [cite: 5]", 
-                hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28) [cite: 5]", 
-                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado [cite: 5]", 
-                av: "Foco na funcionalidade da comunicação e no progresso individual conforme o PEI [cite: 5]" 
+                u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico", 
+                o: "Gênero Fábula; Substantivo; Artigo e Numeral; Adjetivos; Concordância Nominal", 
+                ht: "(EF69LP47)(EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04)", 
+                hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28)", 
+                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado", 
+                av: "Foco na funcionalidade da comunicação e no progresso individual conforme o PEI" 
             },
-            "ARTE": { 
-                u: "DESENHO E PINTURA COM MATERIAIS TRADICIONAIS [cite: 5]", 
-                o: "Desenho figurativo e abstrato; Elementos da linguagem visual [cite: 5]", 
-                ht: "EF69AR01; EF69AR02; EF69AR04 [cite: 5]", 
-                hp: "EF69AR01; EF69AR02; EF69AR04 [cite: 5]", 
-                mt: "Atividades adaptadas; Rodas de conversa; Slides [cite: 5]", 
-                av: "Observação da participação e envolvimento; Avaliação adaptada [cite: 5]" 
-            },
-            "MATEMÁTICA": { 
-                u: "Números e Geometria [cite: 6]", 
-                o: "Unidade 1 - Números naturais; Unidade 2 - Operações; Unidades 3 e 4 - Formas [cite: 6]", 
-                ht: "EF06MA01; EF06MA02; EF06MA17 [cite: 6]", 
-                hp: "EF06MA01; EF06MA02; EF06MA17 [cite: 6]", 
-                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado [cite: 6]", 
-                av: "Avaliação processual e contínua [cite: 6]" 
-            }
+            "ARTE": { u: "DESENHO E PINTURA", o: "Desenho figurativo e abstrato; Elementos visuais", ht: "EF69AR01; EF69AR02", hp: "EF69AR01; EF69AR02", mt: "Atividades adaptadas", av: "Avaliação adaptada" }
         };
 
         function init() {
             for (let m in dadosBase) {
-                if (!localStorage.getItem(`pei_v5_${m}`)) {
-                    localStorage.setItem(`pei_v5_${m}`, JSON.stringify(dadosBase[m]));
+                if (!localStorage.getItem(`pei_v6_${m}`)) {
+                    localStorage.setItem(`pei_v6_${m}`, JSON.stringify(dadosBase[m]));
                 }
             }
             carregarDados();
@@ -106,7 +89,7 @@
 
         function carregarDados() {
             const m = document.getElementById('materiaAtiva').value;
-            const s = JSON.parse(localStorage.getItem(`pei_v5_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            const s = JSON.parse(localStorage.getItem(`pei_v6_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
             document.getElementById('u').value = s.u; document.getElementById('o').value = s.o;
             document.getElementById('ht').value = s.ht; document.getElementById('hp').value = s.hp;
             document.getElementById('mt').value = s.mt; document.getElementById('av').value = s.av;
@@ -116,20 +99,19 @@
         function salvar() {
             const m = document.getElementById('materiaAtiva').value;
             const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value };
-            localStorage.setItem(`pei_v5_${m}`, JSON.stringify(d));
+            localStorage.setItem(`pei_v6_${m}`, JSON.stringify(d));
             renderStatus();
-            alert("Informações de " + m + " salvas!");
+            alert("Salvo!");
         }
 
         function renderStatus() {
             const g = document.getElementById('statusGrid'); g.innerHTML = '';
             areas.forEach(a => a.d.forEach(d => {
-                const s = localStorage.getItem(`pei_v5_${d}`);
+                const s = localStorage.getItem(`pei_v6_${d}`);
                 g.innerHTML += `<div class="p-2 border rounded-lg text-center ${s?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-white text-slate-300'}"><div class="text-[8px] font-bold truncate">${d}</div><div class="text-xs">${s?'✅':'⏳'}</div></div>`;
             }));
         }
 
-        // Função para carregar a imagem e converter em formato utilizável pelo PDF
         function carregarImagem(url) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -146,23 +128,27 @@
             const WIDTH = doc.internal.pageSize.getWidth() - (MARGIN * 2);
             
             let imgCabecalho;
+            let alturaProporcional = 25; // Padrão caso falhe
+
             try {
                 imgCabecalho = await carregarImagem('cabecalho.png');
+                // Cálculo para manter a proporção original ocupando toda a largura
+                const ratio = imgCabecalho.width / imgCabecalho.height;
+                alturaProporcional = WIDTH / ratio;
             } catch (e) {
-                console.error("Erro ao carregar cabeçalho.png. Verifique se o arquivo existe na raiz do GitHub.");
+                console.error("Erro na imagem.");
             }
 
             const drawHeader = (pdf) => {
                 if (imgCabecalho) {
-                    pdf.addImage(imgCabecalho, 'PNG', MARGIN, 8, WIDTH, 22);
-                } else {
-                    pdf.setFontSize(10).text("ESCOLA ESTADUAL MILITAR DOM PEDRO II [cite: 3]", 148, 15, {align: 'center'});
+                    // Adiciona imagem com largura total e altura calculada proporcionalmente
+                    pdf.addImage(imgCabecalho, 'PNG', MARGIN, 8, WIDTH, alturaProporcional);
                 }
-                return 38;
+                return 8 + alturaProporcional + 5; // Posição Y logo abaixo da imagem
             };
 
             let y = drawHeader(doc);
-            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT [cite: 3]", 148, y, {align:'center'});
+            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT", 148, y, {align:'center'});
             y += 10;
 
             areas.forEach(area => {
@@ -172,7 +158,7 @@
                 doc.setTextColor(0); y += 12;
 
                 area.d.forEach(disc => {
-                    const s = JSON.parse(localStorage.getItem(`pei_v5_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
+                    const s = JSON.parse(localStorage.getItem(`pei_v6_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
                     doc.setFontSize(8).setFont(undefined, 'bold').text(disc + " / Assinatura: ________________________________________________", MARGIN, y);
                     
                     doc.autoTable({
@@ -188,7 +174,7 @@
                 });
             });
 
-            doc.save("PEI_VICTOR_MOISES_FINAL.pdf");
+            doc.save("PEI_VICTOR_MOISES_PROPORCIONAL.pdf");
         }
 
         init();
