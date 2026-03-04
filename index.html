@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEI - EEM Dom Pedro II</title>
+    <title>Sistema PEI - EEM Dom Pedro II</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -12,116 +12,93 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50">
 
     <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg">
-        <h1 class="text-xl font-bold uppercase tracking-wide">Escola Estadual Militar Dom Pedro II</h1>
-        <p class="text-xs mt-1 opacity-80">Plano Educacional Individualizado (PEI) - Gestão 2026</p>
+        <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
+        <p class="text-xs mt-1">Plano Educacional Individualizado (PEI) - Victor Moises Haubricht [cite: 3]</p>
     </header>
 
     <main class="container mx-auto p-4 max-w-6xl space-y-6">
-        
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase">Estudante</p><p class="font-bold text-lg">VICTOR MOISES HAUBRICHT</p></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase">Turma</p><p class="font-bold text-lg">6º ANO D</p></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase">Unidade</p><p class="font-bold text-lg text-[#1f3864]">EEM DOM PEDRO II</p></div>
-            </div>
-        </section>
-
-        <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 pb-4 border-b">
-                <h2 class="font-bold text-slate-700 uppercase text-sm tracking-widest">Lançamento por Disciplina</h2>
-                <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border-2 border-slate-100 rounded-lg font-bold text-blue-900 bg-slate-50 outline-none focus:border-blue-500 transition-all w-full md:w-80">
-                    <optgroup label="I. LINGUAGENS">
+        <section class="bg-white p-6 rounded-xl shadow-md border">
+            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border rounded-lg font-bold text-blue-900 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-80">
+                    <optgroup label="I. LINGUAGENS [cite: 5]">
                         <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
                         <option value="ARTE">ARTE</option>
                         <option value="EDUCAÇÃO FÍSICA">EDUCAÇÃO FÍSICA</option>
                         <option value="INGLÊS">INGLÊS</option>
                     </optgroup>
-                    <optgroup label="II. MATEMÁTICA">
+                    <optgroup label="II. MATEMÁTICA [cite: 6]">
                         <option value="MATEMÁTICA">MATEMÁTICA</option>
                     </optgroup>
-                    <optgroup label="III. CIÊNCIAS HUMANAS">
+                    <optgroup label="III. CIÊNCIAS HUMANAS [cite: 7]">
                         <option value="GEOGRAFIA">GEOGRAFIA</option>
                         <option value="HISTÓRIA">HISTÓRIA</option>
                     </optgroup>
-                    <optgroup label="IV. CIÊNCIAS DA NATUREZA">
+                    <optgroup label="IV. CIÊNCIAS DA NATUREZA [cite: 8]">
                         <option value="CIÊNCIAS">CIÊNCIAS</option>
                     </optgroup>
                 </select>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all">SALVAR</button>
+                    <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-all">GERAR PDF FINAL</button>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Unidades Temáticas</label><textarea id="u" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Objetos de Conhecimento</label><textarea id="o" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Habilidades Turma</label><textarea id="ht" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-blue-600 uppercase">Habilidades PAEDE (Adaptadas)</label><textarea id="hp" class="w-full p-3 border-2 border-blue-50/50 rounded-lg h-32 text-sm focus:border-blue-400 outline-none bg-blue-50/20"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Metodologia / Recursos</label><textarea id="mt" class="w-full p-3 border rounded-lg h-32 text-sm focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação</label><textarea id="av" class="w-full p-3 border rounded-lg h-32 text-sm focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
-            </div>
-
-            <div class="mt-8 flex flex-col md:flex-row gap-4">
-                <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-700 transition-all uppercase text-xs tracking-widest">Salvar Alterações</button>
-                <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-black transition-all uppercase text-xs tracking-widest">Gerar PDF Final</button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Unidades Temáticas</label><textarea id="u" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Objetos de Conhecimento</label><textarea id="o" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Habilidades Turma</label><textarea id="ht" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-blue-600 uppercase">Habilidades PAEDE</label><textarea id="hp" class="w-full p-3 border-2 border-blue-50 rounded-lg h-32 text-sm outline-none bg-blue-50/20"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Metodologia</label><textarea id="mt" class="w-full p-3 border rounded-lg h-32 text-sm outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação</label><textarea id="av" class="w-full p-3 border rounded-lg h-32 text-sm outline-none"></textarea></div>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <h3 class="text-[10px] font-bold uppercase text-slate-400 mb-4 tracking-widest">Status de Preenchimento</h3>
-            <div id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3"></div>
-        </section>
+        <section id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2"></section>
     </main>
 
     <script>
         const areas = [
-            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", d: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "INGLÊS"] },
-            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", d: ["MATEMÁTICA"] },
-            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", d: ["GEOGRAFIA", "HISTÓRIA"] },
-            { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", d: ["CIÊNCIAS"] }
+            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS [cite: 5]", d: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "INGLÊS"] },
+            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS [cite: 6]", d: ["MATEMÁTICA"] },
+            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS [cite: 7]", d: ["GEOGRAFIA", "HISTÓRIA"] },
+            { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS [cite: 8]", d: ["CIÊNCIAS"] }
         ];
 
-        // Carregamento de dados oficiais do documento VICTOR MOISES HAUBRICT - 6ºD.docx
-        const dadosPadrao = {
+        // Dados Iniciais do documento VICTOR MOISES HAUBRICHT [cite: 3]
+        const dadosBase = {
             "LÍNGUA PORTUGUESA": { 
-                u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico", 
-                o: "Gênero Fábula; Substantivos; Artigos e Numerais; Adjetivos; Concordância Nominal", 
-                ht: "(EF69LP47) (EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04)", 
-                hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28)", 
-                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado.", 
-                av: "Foco na funcionalidade da comunicação e progresso individual conforme o PEI." 
+                u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico [cite: 5]", 
+                o: "Gênero Fábula; Substantivo; Artigo e Numeral; Adjetivos; Concordância Nominal [cite: 5]", 
+                ht: "(EF69LP47)(EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04) [cite: 5]", 
+                hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28) [cite: 5]", 
+                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado [cite: 5]", 
+                av: "Foco na funcionalidade da comunicação e no progresso individual conforme o PEI [cite: 5]" 
             },
             "ARTE": { 
-                u: "DESENHO E PINTURA COM MATERIAIS TRADICIONAIS", 
-                o: "Desenho figurativo e abstrato; Elementos da linguagem visual.", 
-                ht: "EF69AR01; EF69AR02; EF69AR04", 
-                hp: "EF69AR01; EF69AR02; EF69AR04", 
-                mt: "Atividades adaptadas; Rodas de conversa; Slides.", 
-                av: "Observação da participação e envolvimento; Avaliação adaptada." 
+                u: "DESENHO E PINTURA COM MATERIAIS TRADICIONAIS [cite: 5]", 
+                o: "Desenho figurativo e abstrato; Elementos da linguagem visual [cite: 5]", 
+                ht: "EF69AR01; EF69AR02; EF69AR04 [cite: 5]", 
+                hp: "EF69AR01; EF69AR02; EF69AR04 [cite: 5]", 
+                mt: "Atividades adaptadas; Rodas de conversa; Slides [cite: 5]", 
+                av: "Observação da participação e envolvimento; Avaliação adaptada [cite: 5]" 
             },
             "MATEMÁTICA": { 
-                u: "Números e Geometria", 
-                o: "Números naturais; Operações; Formas planas e espaciais.", 
-                ht: "EF06MA01; EF06MA02; EF06MA17", 
-                hp: "EF06MA01; EF06MA02; EF06MA17", 
-                mt: "Flexibilização de tempo e material estruturado.", 
-                av: "Avaliação processual e contínua." 
-            },
-            "GEOGRAFIA": { 
-                u: "Capítulos 1 a 4", 
-                o: "Espaço geográfico; Representação do espaço; Terra: espaço em que vivemos.", 
-                ht: "(EF06GE06) (EF06GE07)", 
-                hp: "(EF06GE07.1MT) (EF06GE03)", 
-                mt: "Atendimento individualizado e material estruturado.", 
-                av: "Avaliação formativa e processual." 
+                u: "Números e Geometria [cite: 6]", 
+                o: "Unidade 1 - Números naturais; Unidade 2 - Operações; Unidades 3 e 4 - Formas [cite: 6]", 
+                ht: "EF06MA01; EF06MA02; EF06MA17 [cite: 6]", 
+                hp: "EF06MA01; EF06MA02; EF06MA17 [cite: 6]", 
+                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado [cite: 6]", 
+                av: "Avaliação processual e contínua [cite: 6]" 
             }
         };
 
         function init() {
-            // Inicializa dados do documento apenas se estiver vazio
-            for (let m in dadosPadrao) {
-                if (!localStorage.getItem(`pei_v4_${m}`)) {
-                    localStorage.setItem(`pei_v4_${m}`, JSON.stringify(dadosPadrao[m]));
+            for (let m in dadosBase) {
+                if (!localStorage.getItem(`pei_v5_${m}`)) {
+                    localStorage.setItem(`pei_v5_${m}`, JSON.stringify(dadosBase[m]));
                 }
             }
             carregarDados();
@@ -129,43 +106,37 @@
 
         function carregarDados() {
             const m = document.getElementById('materiaAtiva').value;
-            const s = JSON.parse(localStorage.getItem(`pei_v4_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
-            
-            document.getElementById('u').value = s.u; 
-            document.getElementById('o').value = s.o;
-            document.getElementById('ht').value = s.ht; 
-            document.getElementById('hp').value = s.hp;
-            document.getElementById('mt').value = s.mt; 
-            document.getElementById('av').value = s.av;
-            
+            const s = JSON.parse(localStorage.getItem(`pei_v5_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            document.getElementById('u').value = s.u; document.getElementById('o').value = s.o;
+            document.getElementById('ht').value = s.ht; document.getElementById('hp').value = s.hp;
+            document.getElementById('mt').value = s.mt; document.getElementById('av').value = s.av;
             renderStatus();
         }
 
         function salvar() {
             const m = document.getElementById('materiaAtiva').value;
-            const d = { 
-                u: document.getElementById('u').value, 
-                o: document.getElementById('o').value, 
-                ht: document.getElementById('ht').value, 
-                hp: document.getElementById('hp').value, 
-                mt: document.getElementById('mt').value, 
-                av: document.getElementById('av').value 
-            };
-            localStorage.setItem(`pei_v4_${m}`, JSON.stringify(d));
+            const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value };
+            localStorage.setItem(`pei_v5_${m}`, JSON.stringify(d));
             renderStatus();
-            alert("Dados de " + m + " salvos com sucesso!");
+            alert("Informações de " + m + " salvas!");
         }
 
         function renderStatus() {
             const g = document.getElementById('statusGrid'); g.innerHTML = '';
             areas.forEach(a => a.d.forEach(d => {
-                const s = localStorage.getItem(`pei_v4_${d}`);
-                g.innerHTML += `
-                    <div class="p-2 border rounded-lg flex flex-col items-center justify-center ${s ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-white text-slate-300'}">
-                        <span class="text-[8px] font-bold text-center leading-tight h-5 truncate w-full">${d}</span>
-                        <span class="text-[10px] mt-1">${s ? '✅' : '⏳'}</span>
-                    </div>`;
+                const s = localStorage.getItem(`pei_v5_${d}`);
+                g.innerHTML += `<div class="p-2 border rounded-lg text-center ${s?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-white text-slate-300'}"><div class="text-[8px] font-bold truncate">${d}</div><div class="text-xs">${s?'✅':'⏳'}</div></div>`;
             }));
+        }
+
+        // Função para carregar a imagem e converter em formato utilizável pelo PDF
+        function carregarImagem(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = url;
+            });
         }
 
         async function exportarPDF() {
@@ -173,56 +144,51 @@
             const doc = new jsPDF('l', 'mm', 'a4');
             const MARGIN = 15;
             const WIDTH = doc.internal.pageSize.getWidth() - (MARGIN * 2);
+            
+            let imgCabecalho;
+            try {
+                imgCabecalho = await carregarImagem('cabecalho.png');
+            } catch (e) {
+                console.error("Erro ao carregar cabeçalho.png. Verifique se o arquivo existe na raiz do GitHub.");
+            }
 
-            // Função para repetir o cabeçalho em todas as páginas
             const drawHeader = (pdf) => {
-                try {
-                    // Busca cabecalho.png na mesma pasta do seu index.html no GitHub
-                    pdf.addImage('cabecalho.png', 'PNG', MARGIN, 8, WIDTH, 22);
-                } catch(e) {
-                    pdf.setFontSize(10).text("ESCOLA ESTADUAL MILITAR DOM PEDRO II", 148, 15, {align: 'center'});
+                if (imgCabecalho) {
+                    pdf.addImage(imgCabecalho, 'PNG', MARGIN, 8, WIDTH, 22);
+                } else {
+                    pdf.setFontSize(10).text("ESCOLA ESTADUAL MILITAR DOM PEDRO II [cite: 3]", 148, 15, {align: 'center'});
                 }
-                return 38; // Retorno do Y onde o texto começa
+                return 38;
             };
 
             let y = drawHeader(doc);
-            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT", 148, y, {align:'center'});
+            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT [cite: 3]", 148, y, {align:'center'});
             y += 10;
 
             areas.forEach(area => {
                 if (y > 175) { doc.addPage(); y = drawHeader(doc); }
-                
-                // Faixa azul da área
                 doc.setFillColor(31, 56, 100).rect(MARGIN, y, WIDTH, 8, 'F');
                 doc.setTextColor(255).setFontSize(9).text(area.t, 148, y+5.5, {align:'center'});
-                doc.setTextColor(0); y += 13;
+                doc.setTextColor(0); y += 12;
 
                 area.d.forEach(disc => {
-                    const s = JSON.parse(localStorage.getItem(`pei_v4_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
-                    
+                    const s = JSON.parse(localStorage.getItem(`pei_v5_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
                     doc.setFontSize(8).setFont(undefined, 'bold').text(disc + " / Assinatura: ________________________________________________", MARGIN, y);
                     
                     doc.autoTable({
-                        startY: y + 2,
-                        margin: {left: MARGIN},
-                        tableWidth: WIDTH,
+                        startY: y + 2, margin: {left: MARGIN}, tableWidth: WIDTH,
                         head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
                         body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
-                        theme: 'grid',
-                        styles: {fontSize: 7.5, cellPadding: 2, font: 'helvetica'},
-                        headStyles: {fillColor: [235, 240, 250], textColor: [40, 40, 40], fontStyle: 'bold'},
-                        didDrawPage: (data) => {
-                            // Se a tabela quebrar a página, desenha o cabeçalho na nova
-                            if (data.pageNumber > 1 && data.cursor.y < 40) drawHeader(doc);
-                        }
+                        theme: 'grid', styles: {fontSize: 7.5, cellPadding: 2},
+                        headStyles: {fillColor: [230, 235, 245], textColor: 0},
+                        didDrawPage: (data) => { if (data.pageNumber > 1 && data.cursor.y < 40) drawHeader(doc); }
                     });
-                    
                     y = doc.lastAutoTable.finalY + 12;
                     if (y > 185) { doc.addPage(); y = drawHeader(doc); }
                 });
             });
 
-            doc.save("PEI_VICTOR_MOISES_COMPLETO.pdf");
+            doc.save("PEI_VICTOR_MOISES_FINAL.pdf");
         }
 
         init();
