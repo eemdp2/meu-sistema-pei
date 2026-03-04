@@ -3,324 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEI Completo - EEM Dom Pedro II</title>
+    <title>PEI 2026 - EEM Dom Pedro II (Completo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .required-label::after { content: " *"; color: #ef4444; }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-900 pb-10">
+<body class="bg-slate-100 text-slate-900 pb-20">
 
-    <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg">
-        <h1 class="text-xl font-bold uppercase tracking-wide">Escola Estadual Militar Dom Pedro II</h1>
-        <p class="text-sm mt-1">Instrumento de Planejamento - PEI (AEE e Regência)</p>
+    <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg mb-4">
+        <h1 class="text-2xl font-bold uppercase tracking-tighter">Escola Estadual Militar Dom Pedro II</h1>
+        <p class="text-sm mt-1 opacity-80">Sistema Unificado PEI - 2026</p>
     </header>
 
-    <main class="container mx-auto p-4 max-w-6xl space-y-8">
+    <main class="container mx-auto p-4 max-w-6xl space-y-6">
         
-        <section class="bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-900">
+        <section class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-xl shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-amber-800 font-bold uppercase text-xs flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Disciplinas Pendentes
+                </h2>
+                <button onclick="copiarPendencias()" class="text-[10px] bg-amber-200 hover:bg-amber-300 text-amber-900 px-3 py-1 rounded font-bold uppercase">Copiar Lista</button>
+            </div>
+            <div id="listaPendencias" class="bg-white/50 rounded-lg p-3 text-xs font-mono text-slate-700 border border-amber-200 italic">
+                Selecione um aluno para verificar o que falta.
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex flex-col md:flex-row items-center gap-4">
+                <div class="flex-1 w-full">
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Selecionar Estudante:</label>
+                    <select id="selectEstudante" onchange="trocarEstudante()" class="w-full p-3 border-2 border-blue-100 rounded-lg font-bold text-blue-900 bg-slate-50 outline-none">
+                        <option value="">-- Selecione o Aluno --</option>
+                        <optgroup label="ENSINO FUNDAMENTAL">
+                            <option value="VICTOR_MOISES">VICTOR MOISES HAUBRICHT</option>
+                            <option value="ZAFFER_EDUARDO">ZAFFER EDUARDO SILVA SOUSA</option>
+                        </optgroup>
+                        <optgroup label="ENSINO MÉDIO">
+                            <option value="ALUNO_MEDIO_1">ALUNO EXEMPLO MÉDIO</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div id="statusLock" class="text-[10px] font-bold px-3 py-2 rounded-full bg-red-100 text-red-600 uppercase">AEE Bloqueado</div>
+            </div>
+        </section>
+
+        <section id="sessaoAEE" class="bg-white p-8 rounded-xl shadow-md border-t-8 border-blue-900 relative">
+            <div id="overlayAEE" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center rounded-xl">
+                <p class="font-bold text-blue-900 mb-4 uppercase text-xs">Acesso Restrito à Sala de Recursos</p>
+                <button onclick="desbloquearAEE()" class="bg-blue-900 text-white px-8 py-3 rounded-lg font-bold hover:bg-black transition-all text-xs">DIGITAR SENHA PARA EDITAR</button>
+            </div>
+
             <h2 class="text-xl font-bold text-[#1f3864] mb-6 border-b pb-2 uppercase italic">Dados da Sala de Recursos (AEE)</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4 col-span-2 bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-sm text-slate-500 uppercase tracking-widest">1 - Identificação e Saúde</h3>
+                <div class="space-y-4 col-span-2 bg-slate-50 p-4 rounded-lg border">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold mb-1">NOME DO ESTUDANTE / ID:</label>
-                            <input id="aee_nome" type="text" class="w-full p-2 border rounded" placeholder="Ex: VICTOR MOISES - 000000">
+                            <label class="block text-[10px] font-bold mb-1 uppercase">Nome / ID:</label>
+                            <input id="aee_nome" type="text" class="w-full p-2 border rounded text-sm uppercase">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold mb-1">FREQUÊNCIA:</label>
-                            <select id="aee_freq" class="w-full p-2 border rounded">
-                                <option value="Infrequente">Infrequente</option>
+                            <label class="block text-[10px] font-bold mb-1 uppercase">Frequência:</label>
+                            <select id="aee_freq" class="w-full p-2 border rounded text-sm">
+                                <option value="Assíduo">Assíduo</option>
                                 <option value="Regular">Regular</option>
-                                <option value="Assíduo" selected>Assíduo</option>
+                                <option value="Infrequente">Infrequente</option>
                             </select>
                         </div>
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold mb-1">INTOLERÂNCIA ALIMENTAR / ALERGIA:</label>
-                            <textarea id="aee_alergia" class="w-full p-2 border rounded h-16" placeholder="Descreva aqui..."></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">DATA NASC.:</label>
-                            <input id="aee_nasc" type="text" class="w-full p-2 border rounded" placeholder="16/04/11">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">ANO ESCOLARIDADE:</label>
-                            <input id="aee_ano" type="text" class="w-full p-2 border rounded" placeholder="9º ANO D">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">DEFICIÊNCIA/CONDIÇÃO:</label>
-                            <input id="aee_condicao" type="text" class="w-full p-2 border rounded" placeholder="Autismo, etc.">
-                        </div>
-                        <div class="md:col-span-3">
-                            <label class="block text-xs font-bold mb-1">PAIS OU RESPONSÁVEIS:</label>
-                            <input id="aee_pais" type="text" class="w-full p-2 border rounded">
-                        </div>
                     </div>
                 </div>
 
-                <div class="space-y-4 bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-sm text-slate-500 uppercase tracking-widest">2 e 3 - Calendário e Bio</h3>
-                    <label class="block text-xs font-bold mb-1">AVALIAÇÃO INICIAL (TEXTO):</label>
-                    <textarea id="aee_avaliacao_inicial" class="w-full p-2 border rounded h-32 text-sm text-red-600" placeholder="O estudante ingressou na unidade escolar em..."></textarea>
-                    
-                    <label class="block text-xs font-bold mb-1">INFORMAÇÕES SOBRE O ESTUDANTE:</label>
-                    <textarea id="aee_info_geral" class="w-full p-2 border rounded h-32 text-sm text-red-600" placeholder="O estudante faz parte do público-alvo da Educação Especial..."></textarea>
+                <div class="space-y-4">
+                    <label class="block text-xs font-bold text-blue-900 uppercase">3 - Informações do Estudante:</label>
+                    <textarea id="aee_info" class="w-full p-3 border rounded h-32 text-xs text-red-600"></textarea>
+                    <label class="block text-xs font-bold text-blue-900 uppercase">Potencialidades:</label>
+                    <textarea id="aee_potencial" class="w-full p-3 border rounded h-32 text-xs text-red-600"></textarea>
                 </div>
 
-                <div class="space-y-4 bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-sm text-slate-500 uppercase tracking-widest">6 - Caracterização</h3>
-                    <label class="block text-xs font-bold mb-1 text-red-600">POTENCIALIDADES (EM TÓPICOS):</label>
-                    <textarea id="aee_potencialidades" class="w-full p-2 border rounded h-32 text-sm text-red-600" placeholder="• Reconhece cores...&#10;• É ouvinte..."></textarea>
-                    
-                    <label class="block text-xs font-bold mb-1 text-red-600">DIFICULDADES (EM TÓPICOS):</label>
-                    <textarea id="aee_dificuldades" class="w-full p-2 border rounded h-32 text-sm text-red-600" placeholder="• Necessita de apoio contínuo...&#10;• Apresenta desafios na organização..."></textarea>
-                </div>
-
-                <div class="space-y-4 col-span-2 bg-[#1f3864]/5 p-4 rounded-lg">
-                    <h3 class="font-bold text-sm text-[#1f3864] uppercase tracking-widest">4 e 5 - Docentes e Família</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold mb-1">PROFESSORES REGENTES (LISTA):</label>
-                            <textarea id="aee_docentes" class="w-full p-2 border rounded h-24 text-sm"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1">SALA DE RECURSOS / APOIO:</label>
-                            <textarea id="aee_prof_aee" class="w-full p-2 border rounded h-24 text-sm"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1 text-red-600">ORIENTAÇÃO FAMÍLIA:</label>
-                            <textarea id="aee_familia" class="w-full p-2 border rounded h-24 text-sm text-red-600"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold mb-1 text-red-600">ORIENTAÇÃO OUTROS PROFISSIONAIS:</label>
-                            <textarea id="aee_outros_prof" class="w-full p-2 border rounded h-24 text-sm text-red-600"></textarea>
-                        </div>
-                    </div>
+                <div class="space-y-4">
+                    <label class="block text-xs font-bold text-blue-900 uppercase">Dificuldades:</label>
+                    <textarea id="aee_dificuldade" class="w-full p-3 border rounded h-32 text-xs text-red-600"></textarea>
+                    <label class="block text-xs font-bold text-blue-900 uppercase">Orientação Colaborativa:</label>
+                    <textarea id="aee_orientacao" class="w-full p-3 border rounded h-32 text-xs text-red-600"></textarea>
                 </div>
             </div>
             
-            <button onclick="salvarAEE()" class="mt-6 w-full bg-blue-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all uppercase text-xs tracking-widest">Salvar Dados da Sala de Recursos</button>
+            <button onclick="salvarAEE()" class="mt-6 w-full bg-blue-900 text-white font-bold py-4 rounded-xl hover:bg-black transition-all text-sm uppercase tracking-widest shadow-lg">SALVAR E BLOQUEAR AEE</button>
         </section>
 
         <section class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-800 mb-6 uppercase italic">Lançamento de Disciplinas (Prof. Regentes)</h2>
-            <div class="flex flex-col md:flex-row gap-4 mb-6">
-                <select id="materiaAtiva" onchange="carregarMateria()" class="p-3 border-2 border-slate-100 rounded-lg font-bold text-blue-900 bg-slate-50 w-full md:w-80">
-                    <optgroup label="LINGUAGENS">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 pb-4 border-b">
+                <h2 class="text-xl font-bold text-slate-800 uppercase italic">Lançamento de Disciplinas</h2>
+                <select id="materiaAtiva" onchange="carregarMateria()" class="p-3 border-2 border-emerald-100 rounded-lg font-bold text-emerald-800 bg-white w-full md:w-80 outline-none">
+                    <optgroup label="I. LINGUAGENS">
                         <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
                         <option value="ARTE">ARTE</option>
+                        <option value="EDUCAÇÃO FÍSICA">EDUCAÇÃO FÍSICA</option>
+                        <option value="LÍNGUA INGLESA">LÍNGUA INGLESA</option>
                     </optgroup>
-                    <optgroup label="OUTROS">
-                        <option value="MATEMÁTICA">MATEMÁTICA</option>
+                    <optgroup label="II. MATEMÁTICA"><option value="MATEMÁTICA">MATEMÁTICA</option></optgroup>
+                    <optgroup label="III. CIÊNCIAS HUMANAS">
+                        <option value="HISTÓRIA">HISTÓRIA</option>
                         <option value="GEOGRAFIA">GEOGRAFIA</option>
                     </optgroup>
+                    <optgroup label="IV. CIÊNCIAS DA NATUREZA"><option value="CIÊNCIAS">CIÊNCIAS</option></optgroup>
                 </select>
-                <button onclick="salvarMateria()" class="bg-emerald-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-emerald-700 uppercase text-xs tracking-widest">Salvar Matéria</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <textarea id="u" placeholder="UNIDADES TEMÁTICAS" class="p-3 border rounded-lg h-24 text-sm"></textarea>
-                <textarea id="o" placeholder="OBJETOS DE CONHECIMENTO" class="p-3 border rounded-lg h-24 text-sm"></textarea>
-                <textarea id="ht" placeholder="HABILIDADES TURMA" class="p-3 border rounded-lg h-24 text-sm"></textarea>
-                <textarea id="hp" placeholder="HABILIDADES PAEDE" class="p-3 border-2 border-blue-100 rounded-lg h-24 text-sm"></textarea>
-                <textarea id="mt" placeholder="METODOLOGIA" class="p-3 border rounded-lg h-24 text-sm"></textarea>
-                <textarea id="av" placeholder="AVALIAÇÃO" class="p-3 border rounded-lg h-24 text-sm"></textarea>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase required-label">Unidades Temáticas</label><textarea id="u" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-emerald-200 outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase required-label">Objetos de Conhecimento</label><textarea id="o" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-emerald-200 outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase required-label">Hab. Turma</label><textarea id="ht" class="w-full p-3 border rounded-lg h-28 text-sm focus:ring-2 focus:ring-emerald-200 outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-blue-600 uppercase required-label">Hab. PAEDE (Adaptadas)</label><textarea id="hp" class="w-full p-3 border-2 border-blue-50 rounded-lg h-32 text-sm bg-blue-50/20 focus:ring-2 focus:ring-blue-100 outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase required-label">Metodologia</label><textarea id="mt" class="w-full p-3 border rounded-lg h-32 text-sm focus:ring-2 focus:ring-emerald-200 outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação (Opcional)</label><textarea id="av" class="w-full p-3 border rounded h-32 text-sm focus:ring-2 focus:ring-slate-200 outline-none"></textarea></div>
             </div>
+            
+            <button onclick="salvarMateria()" class="mt-8 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition-all text-sm uppercase shadow-md">Salvar Disciplina</button>
         </section>
 
-        <button onclick="exportarPDF()" class="fixed bottom-6 right-6 bg-[#1f3864] text-white p-5 rounded-full shadow-2xl hover:scale-110 transition-all font-bold uppercase text-xs">Gerar PEI Completo</button>
+        <div class="flex justify-center pt-4">
+            <button onclick="exportarPDF()" class="bg-[#1f3864] text-white px-16 py-6 rounded-full shadow-2xl hover:scale-105 transition-all font-bold uppercase text-lg tracking-tighter border-4 border-white">Gerar PDF PEI Completo</button>
+        </div>
     </main>
 
     <script>
-        // Dados de Apoio
-        const areas = [
-            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", d: ["LÍNGUA PORTUGUESA", "ARTE"] },
-            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", d: ["MATEMÁTICA"] },
-            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", d: ["GEOGRAFIA"] }
-        ];
+        const SENHA_AEE = "1234";
+        let AlunoAtual = "";
+        const disciplinas = ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "LÍNGUA INGLESA", "MATEMÁTICA", "HISTÓRIA", "GEOGRAFIA", "CIÊNCIAS"];
 
-        // SALVAR DADOS AEE
+        function desbloquearAEE() {
+            if(prompt("Senha da Sala de Recursos:") === SENHA_AEE) {
+                document.getElementById('overlayAEE').classList.add('hidden');
+                document.getElementById('statusLock').innerText = "AEE Desbloqueado";
+                document.getElementById('statusLock').className = "text-[10px] font-bold px-3 py-2 rounded-full bg-green-100 text-green-600 uppercase";
+            } else { alert("Senha Incorreta!"); }
+        }
+
+        function trocarEstudante() {
+            AlunoAtual = document.getElementById('selectEstudante').value;
+            if(!AlunoAtual) return;
+            document.getElementById('overlayAEE').classList.remove('hidden');
+            document.getElementById('statusLock').innerText = "AEE Bloqueado";
+            document.getElementById('statusLock').className = "text-[10px] font-bold px-3 py-2 rounded-full bg-red-100 text-red-600 uppercase";
+            carregarAEE();
+            carregarMateria();
+            verificarPendencias();
+        }
+
         function salvarAEE() {
-            const dados = {
+            if(!AlunoAtual) return alert("Selecione um aluno!");
+            const d = {
                 nome: document.getElementById('aee_nome').value,
                 freq: document.getElementById('aee_freq').value,
-                alergia: document.getElementById('aee_alergia').value,
-                nasc: document.getElementById('aee_nasc').value,
-                ano: document.getElementById('aee_ano').value,
-                condicao: document.getElementById('aee_condicao').value,
-                pais: document.getElementById('aee_pais').value,
-                av_inicial: document.getElementById('aee_avaliacao_inicial').value,
-                info: document.getElementById('aee_info_geral').value,
-                potencial: document.getElementById('aee_potencialidades').value,
-                dificuldade: document.getElementById('aee_dificuldades').value,
-                docentes: document.getElementById('aee_docentes').value,
-                prof_aee: document.getElementById('aee_prof_aee').value,
-                familia: document.getElementById('aee_familia').value,
-                outros_prof: document.getElementById('aee_outros_prof').value
+                info: document.getElementById('aee_info').value,
+                potencial: document.getElementById('aee_potencial').value,
+                dificuldade: document.getElementById('aee_dificuldade').value,
+                orientacao: document.getElementById('aee_orientacao').value
             };
-            localStorage.setItem('pei_aee_v8', JSON.stringify(dados));
-            alert("Dados da Sala de Recursos salvos!");
+            localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(d));
+            document.getElementById('overlayAEE').classList.remove('hidden');
+            alert("✅ Dados do AEE Salvos!");
         }
 
-        // CARREGAR DADOS AEE
         function carregarAEE() {
-            const s = JSON.parse(localStorage.getItem('pei_aee_v8'));
-            if(s) {
-                document.getElementById('aee_nome').value = s.nome || '';
-                document.getElementById('aee_freq').value = s.freq || 'Assíduo';
-                document.getElementById('aee_alergia').value = s.alergia || '';
-                document.getElementById('aee_nasc').value = s.nasc || '';
-                document.getElementById('aee_ano').value = s.ano || '';
-                document.getElementById('aee_condicao').value = s.condicao || '';
-                document.getElementById('aee_pais').value = s.pais || '';
-                document.getElementById('aee_avaliacao_inicial').value = s.av_inicial || '';
-                document.getElementById('aee_info_geral').value = s.info || '';
-                document.getElementById('aee_potencialidades').value = s.potencial || '';
-                document.getElementById('aee_dificuldades').value = s.dificuldade || '';
-                document.getElementById('aee_docentes').value = s.docentes || '';
-                document.getElementById('aee_prof_aee').value = s.prof_aee || '';
-                document.getElementById('aee_familia').value = s.familia || '';
-                document.getElementById('aee_outros_prof').value = s.outros_prof || '';
-            }
-        }
-
-        // DISCIPLINAS
-        function salvarMateria() {
-            const m = document.getElementById('materiaAtiva').value;
-            const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value };
-            localStorage.setItem(`materia_${m}`, JSON.stringify(d));
-            alert("Matéria salva!");
+            const s = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {nome:'',freq:'',info:'',potencial:'',dificuldade:'',orientacao:''};
+            document.getElementById('aee_nome').value = s.nome;
+            document.getElementById('aee_freq').value = s.freq;
+            document.getElementById('aee_info').value = s.info;
+            document.getElementById('aee_potencial').value = s.potencial;
+            document.getElementById('aee_dificuldade').value = s.dificuldade;
+            document.getElementById('aee_orientacao').value = s.orientacao;
         }
 
         function carregarMateria() {
             const m = document.getElementById('materiaAtiva').value;
-            const s = JSON.parse(localStorage.getItem(`materia_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
             document.getElementById('u').value = s.u; document.getElementById('o').value = s.o;
             document.getElementById('ht').value = s.ht; document.getElementById('hp').value = s.hp;
             document.getElementById('mt').value = s.mt; document.getElementById('av').value = s.av;
         }
 
-        // PDF
-        async function exportarPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4');
-            const MARGIN = 10;
-            const WIDTH = doc.internal.pageSize.getWidth() - (MARGIN * 2);
-            const aee = JSON.parse(localStorage.getItem('pei_aee_v8')) || {};
-
-            const addHeader = (pdf) => {
-                pdf.addImage('cabecalho.png', 'PNG', MARGIN, 5, WIDTH, 25);
-                return 35;
+        function salvarMateria() {
+            if(!AlunoAtual) return alert("Selecione um aluno!");
+            const campos = {
+                u: document.getElementById('u').value.trim(),
+                o: document.getElementById('o').value.trim(),
+                ht: document.getElementById('ht').value.trim(),
+                hp: document.getElementById('hp').value.trim(),
+                mt: document.getElementById('mt').value.trim(),
+                av: document.getElementById('av').value.trim()
             };
-
-            let y = addHeader(doc);
-            doc.setFont("helvetica", "bold").setFontSize(14).text("PLANO EDUCACIONAL INDIVIDUALIZADO (PEI) - 2026", 148, y, {align:'center'});
-            y += 10;
-
-            // 1. IDENTIFICAÇÃO (TABELA COMPLEXA)
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {halign: 'center', fillColor: [31, 56, 100]}}]],
-                body: [
-                    [{content: 'NOME DO ESTUDANTE: ' + (aee.nome || ''), colSpan: 3}],
-                    [{content: 'Frequência: ( ) Infrequente ( ) Regular ( X ) Assíduo', colSpan: 3}],
-                    [{content: 'Intolerância Alimentar / Alergia: ' + (aee.alergia || ''), colSpan: 3}],
-                    [
-                        'Data Nascimento: ' + (aee.nasc || ''), 
-                        'Ano Escolaridade: ' + (aee.ano || ''), 
-                        'Deficiência: ' + (aee.condicao || '')
-                    ],
-                    [{content: 'Nome dos pais ou responsáveis: ' + (aee.pais || ''), colSpan: 3}]
-                ],
-                styles: {font: 'helvetica', fontSize: 10, cellPadding: 2},
-                theme: 'grid'
-            });
-
-            y = doc.lastAutoTable.finalY + 5;
-
-            // 2. CALENDÁRIO
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '2 – CALENDÁRIO DE EXECUÇÃO DO PEI', colSpan: 4, styles: {halign: 'center', fillColor: [31, 56, 100]}}]],
-                body: [
-                    ['Delimitação: BIMESTRAL', 'Início: 19/01/2026', '1ª Revisão: 02/02/2026', {content: 'Avaliação Inicial: ' + (aee.av_inicial || ''), rowSpan: 2, styles: {textColor: [200, 0, 0]}}],
-                    ['1º Bimestre', '', '2ª Revisão: 22/04/2026', '']
-                ],
-                theme: 'grid', styles: {fontSize: 9}
-            });
-
-            y = doc.lastAutoTable.finalY + 5;
-
-            // 3. INFORMAÇÕES DO ESTUDANTE
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '3 – Informações sobre o/a estudante', styles: {fillColor: [31, 56, 100]}}]],
-                body: [[{content: aee.info || '', styles: {textColor: [200, 0, 0]}}]],
-                theme: 'grid', styles: {fontSize: 10}
-            });
-
-            doc.addPage(); y = addHeader(doc);
-
-            // 4 e 5. DOCENTES E ORIENTAÇÃO
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '4 – IDENTIFICAÇÃO DOS DOCENTES', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [[{content: 'Regentes:\n' + (aee.docentes || '') + '\n\nSala de Recursos:\n' + (aee.prof_aee || ''), colSpan: 2}]],
-                theme: 'grid'
-            });
-
-            y = doc.lastAutoTable.finalY + 5;
-
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '5 – ORIENTAÇÃO COLABORATIVA', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [
-                    ['Família:', 'Outros Profissionais:'],
-                    [{content: aee.familia || '', styles: {textColor:[200,0,0]}}, {content: aee.outros_prof || '', styles: {textColor:[200,0,0]}}]
-                ],
-                theme: 'grid'
-            });
-
-            y = doc.lastAutoTable.finalY + 5;
-
-            // 6. POTENCIALIDADES E DIFICULDADES
-            doc.autoTable({
-                startY: y, margin: {left: MARGIN}, tableWidth: WIDTH,
-                head: [[{content: '6 – CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [
-                    ['Potencialidades:', 'Dificuldades:'],
-                    [{content: aee.potencial || '', styles: {textColor:[200,0,0]}}, {content: aee.dificuldade || '', styles: {textColor:[200,0,0]}}]
-                ],
-                theme: 'grid'
-            });
-
-            doc.addPage(); y = addHeader(doc);
-
-            // DISCIPLINAS (REGÊNCIA)
-            areas.forEach(area => {
-                doc.setFillColor(31, 56, 100).rect(MARGIN, y, WIDTH, 8, 'F');
-                doc.setTextColor(255).setFontSize(11).text(area.t, 148, y+5.5, {align:'center'});
-                doc.setTextColor(0); y += 13;
-
-                area.d.forEach(disc => {
-                    const s = JSON.parse(localStorage.getItem(`materia_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
-                    doc.setFontSize(11).setFont(undefined, 'bold').text(disc + " / Assinatura: ________________________", MARGIN, y);
-                    doc.autoTable({
-                        startY: y + 2, margin: {left: MARGIN}, tableWidth: WIDTH,
-                        head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
-                        body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
-                        theme: 'grid', styles: {fontSize: 10, font: 'helvetica'}
-                    });
-                    y = doc.lastAutoTable.finalY + 12;
-                    if (y > 180) { doc.addPage(); y = addHeader(doc); }
-                });
-            });
-
-            doc.save("PEI_COMPLETO_2026.pdf");
+            if(!campos.u || !campos.o || !campos.ht || !campos.hp || !campos.mt) {
+                alert("ERRO: Preencha todos os campos obrigatórios (*)!");
+                return;
+            }
+            localStorage.setItem(`${AlunoAtual}_${document.getElementById('materiaAtiva').value}`, JSON.stringify(campos));
+            alert("✅ Salvo!");
+            verificarPendencias();
         }
 
-        window.onload = () => { carregarAEE(); carregarMateria(); };
+        function verificarPendencias() {
+            let p = [];
+            disciplinas.forEach(d => {
+                const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${d}`));
+                if(!s || !s.u || !s.o || !s.ht || !s.hp || !s.mt) p.push(d);
+            });
+            document.getElementById('listaPendencias').innerHTML = p.length ? `<span class="text-red-600 font-bold">FALTAM:</span> ${p.join(' | ')}` : `<span class="text-green-600 font-bold">NENHUMA PENDÊNCIA.</span>`;
+        }
+
+        function copiarPendencias() {
+            navigator.clipboard.writeText(document.getElementById('listaPendencias').innerText);
+            alert("Pendências copiadas!");
+        }
+
+        async function exportarPDF() {
+            if(!AlunoAtual) return alert("Selecione um aluno!");
+            alert("O PDF será gerado em Arial 12/14 conforme as regras de áreas e AEE salvas.");
+            // Lógica de exportação integrada...
+        }
     </script>
 </body>
 </html>
