@@ -2,125 +2,169 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema PEI - EEM Dom Pedro II</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
-    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
-        <header class="bg-blue-900 text-white p-6 text-center">
-            <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
-            <p class="text-sm">Plano Educacional Individualizado (PEI) - Modelo Oficial</p>
-        </header>
+<body class="bg-slate-50">
 
-        <main class="p-6 space-y-8">
-            <section class="border-b pb-6">
-                <h2 class="bg-gray-200 p-2 font-bold mb-4 italic">1 - IDENTIFICAÇÃO DO ESTUDANTE</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <p><strong>Nome:</strong> VICTOR MOISES HAUBRICHT </p>
-                    <p><strong>Turma:</strong> 6º ANO D </p>
-                    <p><strong>Data de Nasc.:</strong> 27/06/14 </p>
-                    <p><strong>Frequência:</strong> Assíduo </p>
+    <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg">
+        <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
+        <p class="text-xs mt-1 opacity-90">Gestão de Plano Educacional Individualizado (PEI)</p>
+    </header>
+
+    <main class="container mx-auto p-4 max-w-6xl">
+        <div class="bg-white p-6 rounded-xl shadow-sm border mb-6">
+            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border rounded-lg font-bold text-blue-900 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                    <optgroup label="I. LINGUAGENS">
+                        <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
+                        <option value="ARTE">ARTE</option>
+                        <option value="EDUCAÇÃO FÍSICA">EDUCAÇÃO FÍSICA</option>
+                        <option value="INGLÊS">INGLÊS</option>
+                    </optgroup>
+                    <optgroup label="II. MATEMÁTICA">
+                        <option value="MATEMÁTICA">MATEMÁTICA</option>
+                    </optgroup>
+                    <optgroup label="III. CIÊNCIAS HUMANAS">
+                        <option value="GEOGRAFIA">GEOGRAFIA</option>
+                        <option value="HISTÓRIA">HISTÓRIA</option>
+                    </optgroup>
+                    <optgroup label="IV. CIÊNCIAS DA NATUREZA">
+                        <option value="CIÊNCIAS">CIÊNCIAS</option>
+                    </optgroup>
+                </select>
+                <div class="flex gap-2">
+                    <button onclick="salvar()" class="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all">SALVAR</button>
+                    <button onclick="exportarPDF()" class="bg-[#1f3864] text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-all">GERAR PDF COM CABEÇALHO</button>
                 </div>
-            </section>
+            </div>
 
-            <section class="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                <h2 class="text-lg font-bold text-blue-900 mb-4">Área de Lançamento</h2>
-                <div class="grid gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1">Selecione sua Disciplina:</label>
-                        <select id="materia" class="w-full p-2 border rounded">
-                            <option value="LÍNGUA PORTUGUESA">Língua Portuguesa</option>
-                            <option value="MATEMÁTICA">Matemática</option>
-                            <option value="GEOGRAFIA">Geografia</option>
-                            <option value="ARTE">Arte</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1">Habilidades Acadêmicas (Estudante PAEDE):</label>
-                        <textarea id="habilidades" class="w-full p-2 border rounded h-32" placeholder="Descreva as adaptações..."></textarea>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="salvar()" class="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700">Salvar Dados</button>
-                        <button onclick="gerarPDF()" class="bg-blue-800 text-white px-6 py-2 rounded font-bold hover:bg-blue-900">Gerar PDF Unificado</button>
-                    </div>
-                </div>
-            </section>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <textarea id="u" placeholder="UNIDADES TEMÁTICAS" class="p-3 border rounded-lg h-32 text-sm"></textarea>
+                <textarea id="o" placeholder="OBJETOS DE CONHECIMENTO" class="p-3 border rounded-lg h-32 text-sm"></textarea>
+                <textarea id="ht" placeholder="HABILIDADES TURMA" class="p-3 border rounded-lg h-32 text-sm"></textarea>
+                <textarea id="hp" placeholder="HABILIDADES PAEDE" class="p-3 border-2 border-blue-100 rounded-lg h-32 text-sm"></textarea>
+                <textarea id="mt" placeholder="METODOLOGIA" class="p-3 border rounded-lg h-32 text-sm"></textarea>
+                <textarea id="av" placeholder="AVALIAÇÃO" class="p-3 border rounded-lg h-32 text-sm"></textarea>
+            </div>
+        </div>
 
-            <section>
-                <h2 class="font-bold mb-2 italic">Acompanhamento de Preenchimento:</h2>
-                <div id="statusList" class="grid grid-cols-2 md:grid-cols-4 gap-2"></div>
-            </section>
-        </main>
-    </div>
+        <div id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2"></div>
+    </main>
 
     <script>
-        const materiasArr = ["LÍNGUA PORTUGUESA", "MATEMÁTICA", "GEOGRAFIA", "ARTE", "HISTÓRIA", "CIÊNCIAS"];
+        const areas = [
+            { t: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", d: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "INGLÊS"] },
+            { t: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", d: ["MATEMÁTICA"] },
+            { t: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", d: ["GEOGRAFIA", "HISTÓRIA"] },
+            { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", d: ["CIÊNCIAS"] }
+        ];
 
-        function carregarStatus() {
-            const lista = document.getElementById('statusList');
-            lista.innerHTML = '';
-            materiasArr.forEach(m => {
-                const preenchido = localStorage.getItem(`dados_${m}`);
-                lista.innerHTML += `
-                    <div class="p-2 border rounded ${preenchido ? 'bg-green-100 border-green-300' : 'bg-red-50 border-red-200'} text-xs">
-                        <strong>${m}:</strong> ${preenchido ? '✅ OK' : '❌ Pendente'}
-                    </div>`;
-            });
+        // Dados Iniciais do Victor Moises Haubricht 
+        const dadosIniciais = {
+            "LÍNGUA PORTUGUESA": { 
+                u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico", 
+                o: "Gênero Fábula; Substantivos; Artigo e Numeral; Adjetivos; Concordância Nominal", 
+                ht: "(EF69LP47) (EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04)", 
+                hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28)", 
+                mt: "Flexibilização de tempo; atendimento individualizado via material estruturado", 
+                av: "Foco na funcionalidade da comunicação e progresso individual conforme o PEI" 
+            },
+            "ARTE": { u: "DESENHO E PINTURA", o: "Desenho figurativo e abstrato; Elementos da linguagem visual", ht: "EF69AR01; EF69AR02; EF69AR04", hp: "EF69AR01; EF69AR02", mt: "Atividades adaptadas; Rodas de conversa", av: "Avaliação adaptada e observação do envolvimento" },
+            "MATEMÁTICA": { u: "Números e Geometria", o: "Números naturais; Operações; Formas planas e espaciais", ht: "EF06MA01; EF06MA02; EF06MA17", hp: "EF06MA01; EF06MA02; EF06MA17", mt: "Flexibilização de tempo e material estruturado", av: "Processual" },
+            "GEOGRAFIA": { u: "Capítulos 1 a 4", o: "Espaço geográfico; Representação do espaço; Terra", ht: "(EF06GE06) (EF06GE07)", hp: "(EF06GE07.1MT) (EF06GE03)", mt: "Material estruturado e tempo estendido", av: "Formativa e processual" }
+        };
+
+        function init() {
+            for (let m in dadosIniciais) {
+                if (!localStorage.getItem(`pei_v3_${m}`)) {
+                    localStorage.setItem(`pei_v3_${m}`, JSON.stringify(dadosIniciais[m]));
+                }
+            }
+            carregarDados();
+        }
+
+        function carregarDados() {
+            const m = document.getElementById('materiaAtiva').value;
+            const s = JSON.parse(localStorage.getItem(`pei_v3_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            document.getElementById('u').value = s.u; document.getElementById('o').value = s.o;
+            document.getElementById('ht').value = s.ht; document.getElementById('hp').value = s.hp;
+            document.getElementById('mt').value = s.mt; document.getElementById('av').value = s.av;
+            renderStatus();
         }
 
         function salvar() {
-            const m = document.getElementById('materia').value;
-            const h = document.getElementById('habilidades').value;
-            if(!h) return alert("Preencha as habilidades!");
-            localStorage.setItem(`dados_${m}`, h);
-            alert(`Lançamento de ${m} salvo!`);
-            carregarStatus();
+            const m = document.getElementById('materiaAtiva').value;
+            const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value };
+            localStorage.setItem(`pei_v3_${m}`, JSON.stringify(d));
+            alert("Dados de " + m + " guardados!");
+            renderStatus();
         }
 
-        function gerarPDF() {
+        function renderStatus() {
+            const g = document.getElementById('statusGrid'); g.innerHTML = '';
+            areas.forEach(a => a.d.forEach(d => {
+                const s = localStorage.getItem(`pei_v3_${d}`);
+                g.innerHTML += `<div class="p-2 border rounded-lg text-center ${s?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-white text-slate-300'}"><div class="text-[9px] font-bold truncate">${d}</div><div class="text-xs">${s?'✅':'⏳'}</div></div>`;
+            }));
+        }
+
+        function exportarPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('l', 'mm', 'a4');
+            const MARGIN = 15;
+            const WIDTH = doc.internal.pageSize.getWidth() - (MARGIN * 2);
             
-            // Layout conforme o modelo [cite: 3, 5, 6]
-            doc.setFontSize(10);
-            doc.text("UNIDADE ESCOLAR: ESCOLA ESTADUAL MILITAR DOM PEDRO II", 10, 10);
-            doc.setFontSize(14);
-            doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO (PEI)", 105, 20, { align: "center" });
-            
-            doc.setFontSize(10);
-            doc.text("1 - IDENTIFICAÇÃO DO ESTUDANTE", 10, 30);
-            doc.text("NOME: VICTOR MOISES HAUBRICHT", 10, 36);
-            doc.text("TURMA: 6º ANO D", 120, 36);
-            
-            // Gerar Tabelas de Disciplinas [cite: 5, 6, 7]
-            let currentY = 45;
-            materiasArr.forEach(m => {
-                const dado = localStorage.getItem(`dados_${m}`) || "Não preenchido pelo professor regente.";
-                
-                doc.autoTable({
-                    startY: currentY,
-                    head: [[m, 'HABILIDADES ACADÊMICAS PARA O ESTUDANTE PAEDE']],
-                    body: [['Detalhamento:', dado]],
-                    theme: 'grid',
-                    headStyles: { fillColor: [200, 200, 200], textColor: [0, 0, 0], fontStyle: 'bold' },
-                    styles: { fontSize: 8 }
+            // Função para colocar a imagem no topo de cada página
+            const addHeader = (pdf) => {
+                try {
+                    pdf.addImage('cabecalho.png', 'PNG', MARGIN, 8, WIDTH, 22);
+                } catch(e) {
+                    pdf.setFontSize(10).text("ESCOLA ESTADUAL MILITAR DOM PEDRO II", MARGIN, 15);
+                }
+                return 35;
+            };
+
+            let y = addHeader(doc);
+            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT", 148, y, {align:'center'});
+            y += 10;
+
+            areas.forEach(area => {
+                if (y > 170) { doc.addPage(); y = addHeader(doc); }
+                doc.setFillColor(31, 56, 100).rect(MARGIN, y, WIDTH, 8, 'F');
+                doc.setTextColor(255).setFontSize(9).text(area.t, 148, y+5.5, {align:'center'});
+                doc.setTextColor(0); y += 12;
+
+                area.d.forEach(disc => {
+                    const s = JSON.parse(localStorage.getItem(`pei_v3_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
+                    doc.setFontSize(8).setFont(undefined, 'bold').text(disc + " / Assinatura: ___________________________________", MARGIN, y);
+                    
+                    doc.autoTable({
+                        startY: y + 2, margin: {left: MARGIN}, tableWidth: WIDTH,
+                        head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
+                        body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
+                        theme: 'grid', styles: {fontSize: 7},
+                        headStyles: {fillColor: [230, 235, 245], textColor: 0},
+                        didDrawPage: (data) => { 
+                            // Esta função garante que o cabeçalho apareça se a tabela quebrar a página
+                            if (data.pageNumber > 1 && data.cursor.y < 40) addHeader(doc);
+                        }
+                    });
+                    y = doc.lastAutoTable.finalY + 10;
+                    if (y > 180) { doc.addPage(); y = addHeader(doc); }
                 });
-                currentY = doc.lastAutoTable.finalY + 5;
             });
-
-            // Rodapé de Assinaturas [cite: 11, 12, 13]
-            if (currentY > 250) { doc.addPage(); currentY = 20; }
-            doc.text("__________________________________________", 10, currentY + 20);
-            doc.text("COORDENAÇÃO PEDAGÓGICA", 10, currentY + 25);
-            doc.text("__________________________________________", 110, currentY + 20);
-            doc.text("SALA DE RECURSOS (AEE)", 110, currentY + 25);
-
-            doc.save("PEI_VICTOR_MOISES.pdf");
+            doc.save("PEI_Victor_Moises_Final.pdf");
         }
 
-        carregarStatus();
+        init();
     </script>
 </body>
 </html>
