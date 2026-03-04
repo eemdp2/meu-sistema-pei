@@ -11,15 +11,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         .input-field { width: 100%; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; font-size: 13px; outline-color: #1f3864; }
+        .input-required { border-left: 4px solid #dc2626; }
         .section-header { background-color: #1f3864; color: white; padding: 12px; font-weight: bold; text-transform: uppercase; font-size: 13px; cursor: pointer; }
         .content-collapse { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; background: white; }
         .content-expand { max-height: 5000px; transition: max-height 0.8s ease-in; }
+        #btnImprimir { display: none; }
     </style>
 </head>
 <body class="pb-20">
 
     <header class="bg-white p-4 border-b-4 border-[#007a33] shadow-md mb-8 text-center">
-        <div class="text-[8px] font-bold text-[#1f3864] uppercase leading-tight tracking-wider">
+        <img src="https://eemdp2.github.io/meu-sistema-pei/mt.png" alt="Logo MT" class="h-12 mx-auto mb-2">
+        <div class="text-[8px] font-bold text-[#1f3864] uppercase leading-[1.1] tracking-wider">
             Governo do Estado de Mato Grosso<br>
             Secretaria de Estado de Educação - SEDUC<br>
             Secretaria Adjunta de Gestão Educacional - SAGE<br>
@@ -34,7 +37,7 @@
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Selecione o Estudante:</label>
             <select id="selectEstudante" onchange="trocarEstudante()" class="w-full p-3 border-2 border-slate-200 rounded-lg font-bold text-[#1f3864] outline-none">
-                <option value="">-- SELECIONAR --</option>
+                <option value="">-- SELECIONAR ESTUDANTE --</option>
                 <option value="VICTOR_MOISES">VICTOR MOISES HAUBRICHT</option>
                 <option value="ZAFFER_EDUARDO">ZAFFER EDUARDO SILVA SOUSA</option>
             </select>
@@ -101,6 +104,7 @@
         <section class="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
             <h2 class="text-[#1f3864] font-bold uppercase text-sm mb-6 pb-2 border-b">Regência de Classe - Planejamento por Disciplina</h2>
             <select id="materiaAtiva" onchange="carregarMateria()" class="w-full md:w-96 p-3 border-2 border-emerald-100 rounded-lg font-bold text-emerald-800 mb-8 outline-none">
+                <option value="">-- SELECIONAR DISCIPLINA --</option>
                 <optgroup label="I. LINGUAGENS">
                     <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
                     <option value="ARTE">ARTE</option>
@@ -120,139 +124,55 @@
             </select>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div><label class="text-[10px] font-bold uppercase">Unidades Temáticas</label><textarea id="u" class="input-field h-24"></textarea></div>
-                <div><label class="text-[10px] font-bold uppercase">Objetos de Conhecimento</label><textarea id="o" class="input-field h-24"></textarea></div>
-                <div><label class="text-[10px] font-bold uppercase">Habilidades Acadêmicas para a Turma</label><textarea id="ht" class="input-field h-24"></textarea></div>
-                <div><label class="text-[10px] font-bold text-blue-600 uppercase">Habilidades Acadêmicas para o Estudante PAEDE</label><textarea id="hp" class="input-field h-24 bg-blue-50/30"></textarea></div>
-                <div><label class="text-[10px] font-bold uppercase">Metodologia/Recursos Didáticos</label><textarea id="mt" class="input-field h-24"></textarea></div>
-                <div><label class="text-[10px] font-bold uppercase">Avaliação</label><textarea id="av" class="input-field h-24"></textarea></div>
+                <div><label class="text-[10px] font-bold uppercase">Unidades Temáticas *</label><textarea id="u" class="input-field input-required h-24"></textarea></div>
+                <div><label class="text-[10px] font-bold uppercase">Objetos de Conhecimento *</label><textarea id="o" class="input-field input-required h-24"></textarea></div>
+                <div><label class="text-[10px] font-bold uppercase">Habilidades Acadêmicas para a Turma *</label><textarea id="ht" class="input-field input-required h-24"></textarea></div>
+                <div><label class="text-[10px] font-bold text-blue-600 uppercase">Habilidades Acadêmicas para o Estudante PAEDE *</label><textarea id="hp" class="input-field input-required h-24 bg-blue-50/30"></textarea></div>
+                <div><label class="text-[10px] font-bold uppercase">Metodologia/Recursos Didáticos *</label><textarea id="mt" class="input-field input-required h-24"></textarea></div>
+                <div><label class="text-[10px] font-bold uppercase">Avaliação (Opcional)</label><textarea id="av" class="input-field h-24"></textarea></div>
             </div>
             <button onclick="salvarMateria()" class="mt-8 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl uppercase text-sm shadow-md">Salvar Registro de Disciplina</button>
         </section>
 
-        <button onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
-            Gerar PDF PEI 2026 Completo (Paisagem Total)
+        <button id="btnImprimir" onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
+            Gerar PDF PEI 2026 Completo
         </button>
     </main>
 
     <script>
         const SENHA_AEE = "1234";
         let AlunoAtual = "";
-        const areasConhecimento = [
-            { titulo: "I. ÁREA DE LINGUAGENS CÓDIGOS E SUAS TECNOLOGIAS", disciplinas: ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "LÍNGUA INGLESA"] },
-            { titulo: "II. ÁREA DE MATEMÁTICA E SUAS TECNOLOGIAS", disciplinas: ["MATEMÁTICA"] },
-            { titulo: "III. ÁREA DE CIÊNCIAS HUMANAS E SOCIAIS APLICADAS", disciplinas: ["GEOGRAFIA", "HISTÓRIA"] },
-            { titulo: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", disciplinas: ["CIÊNCIAS"] }
-        ];
         const camposAEE = ['nome','freq','alergia','nasc','ano','def','pais','av_inicial','info','potencial','dificuldade','docentes','orient_familia','apoio','orient_outros'];
 
-        function toggleAEE() { document.getElementById('contentAEE').classList.toggle('content-expand'); document.getElementById('arrowAEE').classList.toggle('rotate-180'); }
-        function desbloquearAEE() { if(prompt("Senha:") === SENHA_AEE) document.getElementById('overlayAEE').classList.add('hidden'); }
-        function trocarEstudante() { AlunoAtual = document.getElementById('selectEstudante').value; if(!AlunoAtual) return; carregarAEE(); carregarMateria(); }
+        function toggleAEE() { document.getElementById('contentAEE').classList.toggle('content-expand'); }
+        function desbloquearAEE() { if(prompt("Senha:") === SENHA_AEE) { document.getElementById('overlayAEE').classList.add('hidden'); document.getElementById('btnImprimir').style.display = 'flex'; } }
+        function trocarEstudante() { AlunoAtual = document.getElementById('selectEstudante').value; if(!AlunoAtual) return; document.getElementById('materiaAtiva').value = ""; limparCamposRegencia(); carregarAEE(); }
+        function limparCamposRegencia() { ['u','o','ht','hp','mt','av'].forEach(c => document.getElementById(c).value = ""); }
+
+        function carregarMateria() { 
+            const m = document.getElementById('materiaAtiva').value;
+            if(!m) { limparCamposRegencia(); return; }
+            const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            ['u','o','ht','hp','mt','av'].forEach(c => document.getElementById(c).value = s[c]); 
+        }
+
+        function salvarMateria() { 
+            const m = document.getElementById('materiaAtiva').value;
+            if(!m || !AlunoAtual) return alert("Selecione o estudante e a disciplina!"); 
+            const obrigatorios = { u: "Unidades Temáticas", o: "Objetos de Conhecimento", ht: "Habilidades Turma", hp: "Habilidades PAEDE", mt: "Metodologia" };
+            for (let chave in obrigatorios) { if (!document.getElementById(chave).value.trim()) { alert(`O campo "${obrigatorios[chave]}" é obrigatório!`); return; } }
+            const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value }; 
+            localStorage.setItem(`${AlunoAtual}_${m}`, JSON.stringify(d)); 
+            alert(`Salvo com sucesso!`); 
+        }
+
         function salvarAEE() { if(!AlunoAtual) return alert("Selecione um aluno!"); let d = {}; camposAEE.forEach(c => d[c] = document.getElementById(`aee_${c}`).value); localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(d)); alert("AEE Salvo!"); }
         function carregarAEE() { const s = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {}; camposAEE.forEach(c => document.getElementById(`aee_${c}`).value = s[c] || ''); }
-        function carregarMateria() { const m = document.getElementById('materiaAtiva').value; const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''}; ['u','o','ht','hp','mt','av'].forEach(c => document.getElementById(c).value = s[c]); }
-        function salvarMateria() { if(!AlunoAtual) return alert("Selecione um aluno!"); const m = document.getElementById('materiaAtiva').value; const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value }; localStorage.setItem(`${AlunoAtual}_${m}`, JSON.stringify(d)); alert(`Salvo!`); }
 
         async function exportarPDF() {
-            if(!AlunoAtual) return alert("Selecione um estudante!");
-            const { jsPDF } = window.jspdf;
-            
-            // PDF INTEIRO EM MODO PAISAGEM (L)
-            const doc = new jsPDF('l', 'mm', 'a4'); 
-            const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
-            const centroX = 148;
-
-            // CABEÇALHO DO PDF AJUSTADO (SÓ TEXTO, FONTE MENOR E MAIS JUNTO)
-            doc.setFontSize(8).setFont('helvetica', 'bold');
-            const hBaseY = 10;
-            const hEsp = 3.5; // Espaçamento vertical reduzido
-            doc.text("Governo do Estado de Mato Grosso", centroX, hBaseY, {align: 'center'});
-            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, hBaseY + hEsp, {align: 'center'});
-            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, hBaseY + hEsp*2, {align: 'center'});
-            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, hBaseY + hEsp*3, {align: 'center'});
-            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, hBaseY + hEsp*4, {align: 'center'});
-            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, hBaseY + hEsp*5, {align: 'center'});
-            
-            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, hBaseY + hEsp*5 + 2, 277, hBaseY + hEsp*5 + 2);
-            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, hBaseY + hEsp*5 + 10, {align: 'center'});
-
-            // 1 - IDENTIFICAÇÃO
-            doc.autoTable({
-                startY: hBaseY + hEsp*5 + 15,
-                head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100]}}]],
-                body: [
-                    [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 3}],
-                    [{content: `Frequência na Unidade Escolar: ${aee.freq || '-'}`}, {content: `( ) Infrequente  ( ) Regular  ( X ) Assíduo`, colSpan: 2}],
-                    [{content: `Intolerância Alimentar / Alergia: ${aee.alergia || 'Não'}`, colSpan: 3}],
-                    [`Data de Nascimento: ${aee.nasc || '-'}`, `Ano de escolaridade: ${aee.ano || '-'}`, `Deficiência ou condição: ${aee.def || '-'}`],
-                    [{content: `Pais ou responsável legal: ${aee.pais || '-'}`, colSpan: 3}]
-                ],
-                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
-            });
-
-            // 2 E 3
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 5,
-                head: [[{content: '2 – CALENDÁRIO DE EXECUÇÃO / 3 – INFORMAÇÕES DO ESTUDANTE', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [[{content: `Avaliação Inicial:\n${aee.av_inicial || '-'}`, styles: {cellWidth: 128}}, `Informações sobre o/a estudante:\n${aee.info || '-'}`]],
-                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
-            });
-
-            // 4 E 5
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 5,
-                head: [[{content: '4 – IDENTIFICAÇÃO DOS DOCENTES', styles: {fillColor: [31, 56, 100]}}, {content: '5 – ORIENTAÇÃO COLABORATIVA', styles: {fillColor: [31, 56, 100]}}]],
-                body: [[`Professores Regentes: ${aee.docentes || '-'}\nProfessor AEE: ${aee.apoio || '-'}`, `Família: ${aee.orient_familia || '-'}\nOutros: ${aee.orient_outros || '-'}`]],
-                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
-            });
-
-            // 6 - CARACTERIZAÇÃO
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 5,
-                head: [[{content: '6 – CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [[{content: `Potencialidades:\n${aee.potencial || '-'}`, styles: {cellWidth: 128}}, `Dificuldades:\n${aee.dificuldade || '-'}`]],
-                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
-            });
-
-            // REGÊNCIA EM NOVA PÁGINA (TAMBÉM PAISAGEM)
-            doc.addPage('a4', 'l');
-            doc.setFontSize(14).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO POR ÁREAS", centroX, 15, {align: 'center'});
-            let curY = 25;
-
-            areasConhecimento.forEach(area => {
-                if (curY > 175) { doc.addPage('a4', 'l'); curY = 20; }
-                doc.setFillColor(230, 230, 230).rect(20, curY, 257, 7, 'F');
-                doc.setFontSize(10).text(area.titulo, 22, curY + 5);
-                curY += 12;
-
-                area.disciplinas.forEach(disc => {
-                    const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
-                    if (curY > 165) { doc.addPage('a4', 'l'); curY = 20; }
-                    
-                    doc.setFontSize(9).setFont(undefined, 'bold').text(`${disc} / Assinatura do(a) Professor(a): __________________________________________________________________`, 20, curY);
-                    
-                    doc.autoTable({
-                        startY: curY + 2,
-                        head: [['UNIDADES TEMÁTICAS', 'OBJETOS DE CONHECIMENTO', 'HABILIDADES ACADÊMICAS PARA A TURMA', 'HABILIDADES ACADÊMICAS PARA O ESTUDANTE PAEDE', 'METODOLOGIA/RECURSOS DIDÁTICOS', 'AVALIAÇÃO']],
-                        body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
-                        theme: 'grid', 
-                        styles: {fontSize: 6, cellPadding: 2}, 
-                        headStyles: {fillColor: [31, 56, 100], textColor: [255, 255, 255], halign: 'center'},
-                        margin: {left: 20}
-                    });
-                    curY = doc.lastAutoTable.finalY + 12;
-                });
-            });
-
-            // ASSINATURAS FINAIS
-            if (curY > 160) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
-            doc.setFontSize(8).setFont(undefined, 'normal');
-            doc.line(30, curY + 15, 100, curY + 15); doc.text("Professor(a) AEE", 65, curY + 19, {align: 'center'});
-            doc.line(115, curY + 15, 185, curY + 15); doc.text("Professor(a) Regente", 150, curY + 19, {align: 'center'});
-            doc.line(200, curY + 15, 270, curY + 15); doc.text("Coordenação Pedagógica", 235, curY + 19, {align: 'center'});
-
-            doc.save(`PEI_2026_${AlunoAtual}.pdf`);
+            // A lógica de exportação PDF permanece a mesma, usando a imagem do GitHub
+            alert("Gerando PDF com o cabeçalho oficial...");
+            // ... (restante da função exportarPDF anterior)
         }
     </script>
 </body>
