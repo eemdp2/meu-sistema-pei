@@ -3,26 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema PEI - EEM Dom Pedro II</title>
+    <title>PEI Profissional - EEM Dom Pedro II</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-50 text-slate-900">
 
     <header class="bg-[#1f3864] text-white p-6 text-center shadow-lg">
         <h1 class="text-xl font-bold uppercase">Escola Estadual Militar Dom Pedro II</h1>
-        <p class="text-xs mt-1">Plano Educacional Individualizado (PEI) - Victor Moises Haubricht</p>
+        <p class="text-sm mt-1">Plano Educacional Individualizado - Victor Moises Haubricht</p>
     </header>
 
     <main class="container mx-auto p-4 max-w-6xl space-y-6">
-        <section class="bg-white p-6 rounded-xl shadow-md border">
-            <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border rounded-lg font-bold text-blue-900 bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-80">
+        <section class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 border-b pb-4">
+                <h2 class="font-bold text-[#1f3864] uppercase text-sm">Painel de Lançamento</h2>
+                <select id="materiaAtiva" onchange="carregarDados()" class="p-3 border-2 border-slate-100 rounded-lg font-bold text-blue-900 bg-slate-50 outline-none w-full md:w-80">
                     <optgroup label="I. LINGUAGENS">
                         <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
                         <option value="ARTE">ARTE</option>
@@ -40,22 +37,24 @@
                         <option value="CIÊNCIAS">CIÊNCIAS</option>
                     </optgroup>
                 </select>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-emerald-700">SALVAR</button>
-                    <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white px-6 py-2 rounded-lg font-bold hover:bg-black">GERAR PDF FINAL</button>
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Unidades Temáticas</label><textarea id="u" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Objetos de Conhecimento</label><textarea id="o" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Habilidades Turma</label><textarea id="ht" class="w-full p-3 border rounded-lg h-28 text-sm outline-none"></textarea></div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Unidades Temáticas</label><textarea id="u" class="w-full p-3 border rounded-lg h-28 text-sm outline-none focus:ring-2 focus:ring-blue-100"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Objetos de Conhecimento</label><textarea id="o" class="w-full p-3 border rounded-lg h-28 text-sm outline-none focus:ring-2 focus:ring-blue-100"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Habilidades Turma</label><textarea id="ht" class="w-full p-3 border rounded-lg h-28 text-sm outline-none focus:ring-2 focus:ring-blue-100"></textarea></div>
                 <div class="space-y-1"><label class="text-[10px] font-bold text-blue-600 uppercase">Habilidades PAEDE</label><textarea id="hp" class="w-full p-3 border-2 border-blue-50 rounded-lg h-32 text-sm outline-none bg-blue-50/20"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Metodologia</label><textarea id="mt" class="w-full p-3 border rounded-lg h-32 text-sm outline-none"></textarea></div>
-                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação</label><textarea id="av" class="w-full p-3 border rounded-lg h-32 text-sm outline-none"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Metodologia</label><textarea id="mt" class="w-full p-3 border rounded-lg h-32 text-sm outline-none focus:ring-2 focus:ring-blue-100"></textarea></div>
+                <div class="space-y-1"><label class="text-[10px] font-bold text-slate-500 uppercase">Avaliação</label><textarea id="av" class="w-full p-3 border rounded-lg h-32 text-sm outline-none focus:ring-2 focus:ring-blue-100"></textarea></div>
+            </div>
+
+            <div class="mt-8 flex flex-col md:flex-row gap-4">
+                <button onclick="salvar()" class="flex-1 bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-emerald-700 transition-all uppercase text-xs">Salvar Dados</button>
+                <button onclick="exportarPDF()" class="flex-1 bg-[#1f3864] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-black transition-all uppercase text-xs">Gerar PDF (Arial 12/14)</button>
             </div>
         </section>
-        <section id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2"></section>
+
+        <section id="statusGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3"></section>
     </main>
 
     <script>
@@ -66,22 +65,27 @@
             { t: "IV. ÁREA CIÊNCIAS DA NATUREZA E SUAS TECNOLOGIAS", d: ["CIÊNCIAS"] }
         ];
 
-        const dadosBase = {
+        // Dados extraídos do documento original
+        const dadosIniciais = {
             "LÍNGUA PORTUGUESA": { 
                 u: "Aprendendo com os animais: fábulas; Narrativas de aventura; Modernismo; Gênero Lírico", 
-                o: "Gênero Fábula; Substantivo; Artigo e Numeral; Adjetivos; Concordância Nominal", 
-                ht: "(EF69LP47)(EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04)", 
+                o: "Gênero Fábula; Substantivos; Artigo e Numeral; Adjetivos; Concordância Nominal", 
+                ht: "(EF69LP47) (EF67LP27) (EF67LP28) (EF69LP53) (EF06LP04)", 
                 hp: "(EF06LP12) (EF69LP47) (EF67LP27) (EF67LP28)", 
                 mt: "Flexibilização de tempo; atendimento individualizado via material estruturado", 
-                av: "Foco na funcionalidade da comunicação e no progresso individual conforme o PEI" 
+                av: "Foco na funcionalidade da comunicação e progresso individual" 
             },
-            "ARTE": { u: "DESENHO E PINTURA", o: "Desenho figurativo e abstrato; Elementos visuais", ht: "EF69AR01; EF69AR02", hp: "EF69AR01; EF69AR02", mt: "Atividades adaptadas", av: "Avaliação adaptada" }
+            "MATEMÁTICA": { 
+                u: "Números e Geometria", o: "Números naturais; Operações; Formas planas e espaciais", 
+                ht: "EF06MA01; EF06MA02; EF06MA17", hp: "EF06MA01; EF06MA02; EF06MA17", 
+                mt: "Flexibilização de tempo e material estruturado", av: "Avaliação processual" 
+            }
         };
 
         function init() {
-            for (let m in dadosBase) {
-                if (!localStorage.getItem(`pei_v6_${m}`)) {
-                    localStorage.setItem(`pei_v6_${m}`, JSON.stringify(dadosBase[m]));
+            for (let m in dadosIniciais) {
+                if (!localStorage.getItem(`pei_v7_${m}`)) {
+                    localStorage.setItem(`pei_v7_${m}`, JSON.stringify(dadosIniciais[m]));
                 }
             }
             carregarDados();
@@ -89,7 +93,7 @@
 
         function carregarDados() {
             const m = document.getElementById('materiaAtiva').value;
-            const s = JSON.parse(localStorage.getItem(`pei_v6_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
+            const s = JSON.parse(localStorage.getItem(`pei_v7_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''};
             document.getElementById('u').value = s.u; document.getElementById('o').value = s.o;
             document.getElementById('ht').value = s.ht; document.getElementById('hp').value = s.hp;
             document.getElementById('mt').value = s.mt; document.getElementById('av').value = s.av;
@@ -99,24 +103,23 @@
         function salvar() {
             const m = document.getElementById('materiaAtiva').value;
             const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value };
-            localStorage.setItem(`pei_v6_${m}`, JSON.stringify(d));
+            localStorage.setItem(`pei_v7_${m}`, JSON.stringify(d));
             renderStatus();
-            alert("Salvo!");
+            alert("Sincronizado com sucesso!");
         }
 
         function renderStatus() {
             const g = document.getElementById('statusGrid'); g.innerHTML = '';
             areas.forEach(a => a.d.forEach(d => {
-                const s = localStorage.getItem(`pei_v6_${d}`);
+                const s = localStorage.getItem(`pei_v7_${d}`);
                 g.innerHTML += `<div class="p-2 border rounded-lg text-center ${s?'bg-emerald-50 text-emerald-700 border-emerald-200':'bg-white text-slate-300'}"><div class="text-[8px] font-bold truncate">${d}</div><div class="text-xs">${s?'✅':'⏳'}</div></div>`;
             }));
         }
 
-        function carregarImagem(url) {
-            return new Promise((resolve, reject) => {
+        function carregarImg(url) {
+            return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => resolve(img);
-                img.onerror = reject;
                 img.src = url;
             });
         }
@@ -127,54 +130,61 @@
             const MARGIN = 15;
             const WIDTH = doc.internal.pageSize.getWidth() - (MARGIN * 2);
             
-            let imgCabecalho;
-            let alturaProporcional = 25; // Padrão caso falhe
+            let imgHeader;
+            let hImg = 25;
 
             try {
-                imgCabecalho = await carregarImagem('cabecalho.png');
-                // Cálculo para manter a proporção original ocupando toda a largura
-                const ratio = imgCabecalho.width / imgCabecalho.height;
-                alturaProporcional = WIDTH / ratio;
-            } catch (e) {
-                console.error("Erro na imagem.");
-            }
+                imgHeader = await carregarImg('cabecalho.png');
+                const ratio = imgHeader.width / imgHeader.height;
+                hImg = WIDTH / ratio;
+            } catch (e) { console.error("Imagem não encontrada."); }
 
             const drawHeader = (pdf) => {
-                if (imgCabecalho) {
-                    // Adiciona imagem com largura total e altura calculada proporcionalmente
-                    pdf.addImage(imgCabecalho, 'PNG', MARGIN, 8, WIDTH, alturaProporcional);
-                }
-                return 8 + alturaProporcional + 5; // Posição Y logo abaixo da imagem
+                if (imgHeader) pdf.addImage(imgHeader, 'PNG', MARGIN, 8, WIDTH, hImg);
+                return 8 + hImg + 8;
             };
 
             let y = drawHeader(doc);
-            doc.setFontSize(14).setFont(undefined, 'bold').text("PEI - VICTOR MOISES HAUBRICHT", 148, y, {align:'center'});
-            y += 10;
+            
+            // Título Principal - Arial 14 (bold)
+            doc.setFont("helvetica", "bold").setFontSize(14);
+            doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO (PEI) - VICTOR MOISES HAUBRICHT", 148, y, {align:'center'});
+            
+            y += 12;
 
             areas.forEach(area => {
-                if (y > 175) { doc.addPage(); y = drawHeader(doc); }
+                if (y > 170) { doc.addPage(); y = drawHeader(doc); }
+                
+                // Faixa da Área - Arial 12 (bold)
                 doc.setFillColor(31, 56, 100).rect(MARGIN, y, WIDTH, 8, 'F');
-                doc.setTextColor(255).setFontSize(9).text(area.t, 148, y+5.5, {align:'center'});
-                doc.setTextColor(0); y += 12;
+                doc.setTextColor(255).setFontSize(12).text(area.t, 148, y+5.5, {align:'center'});
+                doc.setTextColor(0); y += 14;
 
                 area.d.forEach(disc => {
-                    const s = JSON.parse(localStorage.getItem(`pei_v6_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
-                    doc.setFontSize(8).setFont(undefined, 'bold').text(disc + " / Assinatura: ________________________________________________", MARGIN, y);
+                    const s = JSON.parse(localStorage.getItem(`pei_v7_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
+                    
+                    // Nome da Disciplina - Arial 12 (bold)
+                    doc.setFontSize(12).setFont("helvetica", "bold");
+                    doc.text(`${disc} / Assinatura: ________________________________________________`, MARGIN, y);
                     
                     doc.autoTable({
-                        startY: y + 2, margin: {left: MARGIN}, tableWidth: WIDTH,
+                        startY: y + 3,
+                        margin: {left: MARGIN},
+                        tableWidth: WIDTH,
                         head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
                         body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
-                        theme: 'grid', styles: {fontSize: 7.5, cellPadding: 2},
-                        headStyles: {fillColor: [230, 235, 245], textColor: 0},
+                        theme: 'grid',
+                        styles: { font: "helvetica", fontSize: 10, cellPadding: 2 }, // Texto interno 10 para caber melhor na tabela
+                        headStyles: { fillColor: [235, 240, 250], textColor: 0, fontStyle: 'bold' },
                         didDrawPage: (data) => { if (data.pageNumber > 1 && data.cursor.y < 40) drawHeader(doc); }
                     });
-                    y = doc.lastAutoTable.finalY + 12;
+                    
+                    y = doc.lastAutoTable.finalY + 15;
                     if (y > 185) { doc.addPage(); y = drawHeader(doc); }
                 });
             });
 
-            doc.save("PEI_VICTOR_MOISES_PROPORCIONAL.pdf");
+            doc.save("PEI_Victor_Moises_Arial.pdf");
         }
 
         init();
