@@ -1,32 +1,191 @@
-function gerarPDF() {
+// Configurações Globais
+const SENHA_AEE = "1234";
+let AlunoAtual = "";
+const disciplinas = ["LÍNGUA PORTUGUESA", "ARTE", "EDUCAÇÃO FÍSICA", "LÍNGUA INGLESA", "MATEMÁTICA", "HISTÓRIA", "GEOGRAFIA", "CIÊNCIAS"];
+const camposAEE = ['nome','freq','alergia','nasc','ano','def','pais','av_inicial','info','potencial','dificuldade','docentes','orient_familia','apoio','orient_outros'];
+
+// Controle de Interface (Acordeão e Bloqueio)
+function toggleAEE() {
+    document.getElementById('contentAEE').classList.toggle('content-expand');
+    document.getElementById('arrowAEE').classList.toggle('rotate-180');
+}
+
+function desbloquearAEE() {
+    if(prompt("Digite a senha de acesso à Sala de Recursos:") === SENHA_AEE) {
+        document.getElementById('overlayAEE').classList.add('hidden');
+    } else {
+        alert("Senha incorreta!");
+    }
+}
+
+// Lógica de Dados (Estudante e Disciplinas)
+function trocarEstudante() {
+    AlunoAtual = document.getElementById('selectEstudante').value;
+    if(!AlunoAtual) return;
+    carregarAEE();
+    carregarMateria();
+}
+
+function salvarAEE() {
+    if(!AlunoAtual) return alert("Selecione um estudante primeiro!");
+    let dados = {};
+    camposAEE.forEach(campo => {
+        dados[campo] = document.getElementById(`aee_${campo}`).value;
+    });
+    localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(dados));
+    alert("✅ Dados da Sala de Recursos (AEE) salvos com sucesso!");
+}
+
+function carregarAEE() {
+    const salvo = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
+    camposAEE.forEach(campo => {
+        document.getElementById(`aee_${campo}`).value = salvo[campo] || '';
+    });
+}
+
+function carregarMateria() {
+    const materia = document.getElementById('materiaAtiva').value;
+    const salvo = JSON.parse(localStorage.getItem(`${AlunoAtual}_${materia}`)) || {u:'', o:'', ht:'', hp:'', mt:'', av:''};
+    document.getElementById('u').value = salvo.u;
+    document.getElementById('o').value = salvo.o;
+    document.getElementById('ht').value = salvo.ht;
+    document.getElementById('hp').value = salvo.hp;
+    document.getElementById('mt').value = salvo.mt;
+    document.getElementById('av').value = salvo.av;
+}
+
+function salvarMateria() {
+    if(!AlunoAtual) return alert("Selecione um aluno!");
+    const materia = document.getElementById('materiaAtiva').value;
+    const dados = {
+        u: document.getElementById('u').value,
+        o: document.getElementById('o').value,
+        ht: document.getElementById('ht').value,
+        hp: document.getElementById('hp').value,
+        mt: document.getElementById('mt').value,
+        av: document.getElementById('av').value
+    };
+    localStorage.setItem(`${AlunoAtual}_${materia}`, JSON.stringify(dados));
+    alert(`✅ Planejamento de ${materia} salvo!`);
+}
+
+// FUNÇÃO DE EXPORTAÇÃO PDF ORGANIZADA (SEÇÕES 1 A 6)
+async function exportarPDF() {
+    if(!AlunoAtual) return alert("Por favor, selecione um estudante primeiro!");
+    
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('landscape'); // 'landscape' para caber as 6 colunas melhor
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
 
-    // Cabeçalho conforme o documento original [cite: 3]
-    doc.setFontSize(10);
-    doc.text("UNIDADE ESCOLAR: ESCOLA ESTADUAL MILITAR DOM PEDRO II", 10, 10);
-    doc.setFontSize(14);
-    doc.text("PLANO EDUCACIONAL INDIVIDUALIZADO (PEI)", 140, 20, { align: "center" });
+    // --- CABEÇALHO OFICIAL (Logo e Títulos) ---
+    const logoImg = document.querySelector('header img');
+    if (logoImg) {
+        try {
+            const canvas = document.createElement("canvas");
+            canvas.width = logoImg.naturalWidth;
+            canvas.height = logoImg.naturalHeight;
+            canvas.getContext("2d").drawImage(logoImg, 0, 0);
+            doc.addImage(canvas.toDataURL("image/png"), 'PNG', 85, 10, 40, 18);
+        } catch(e) { console.error("Erro no logo"); }
+    }
 
-    // Tabela com as 6 colunas da imagem 
+    doc.setFontSize(10).setFont('helvetica', 'bold').text("GOVERNO DO ESTADO DE MATO GROSSO", 105, 32, {align: 'center'});
+    doc.setFontSize(8).text("SECRETARIA DE ESTADO DE EDUCAÇÃO - SEDUC", 105, 36, {align: 'center'});
+    doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(15, 42, 195, 42);
+    doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - 2026`, 105, 50, {align: 'center'});
+
+    // --- SEÇÃO 1: IDENTIFICAÇÃO ---
     doc.autoTable({
-        startY: 40,
-        head: [['UNIDADES TEMÁTICAS', 'OBJETOS DE CONHECIMENTO', 'HABILIDADES PARA A TURMA', 'HABILIDADES PARA O PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
+        startY: 58,
+        head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 4, styles: {fillColor: [31, 56, 100], halign: 'center'}}]],
         body: [
-            // Aqui o sistema puxa os dados salvos de cada professor
-            ['Fábulas', 'Substantivos', '(EF69LP47)', '(EF06LP12)', 'Tempo estendido', 'Formativa']
+            [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 4}],
+            [{content: `Frequência na Unidade Escolar: ${aee.freq || '-'}`, colSpan: 4}],
+            [{content: `Intolerância Alimentar / Alergia: ${aee.alergia || 'Não declarada'}`, colSpan: 4}],
+            [`Data de Nascimento:\n${aee.nasc || '-'}`, `Ano de escolaridade:\n${aee.ano || '-'}`, {content: `Deficiência ou condição:\n${aee.def || '-'}`, colSpan: 2}],
+            [{content: `Nome dos pais ou responsável legal: ${aee.pais || '-'}`, colSpan: 4}]
         ],
-        theme: 'grid',
-        headStyles: { fillColor: [31, 56, 100], textColor: [255, 255, 255] }, // Azul marinho conforme imagem
-        styles: { fontSize: 8, overflow: 'linebreak' }
+        theme: 'grid', styles: {fontSize: 7, cellPadding: 2}, headStyles: {fontStyle: 'bold'}
     });
 
-    // Bloco de Assinaturas conforme o final do documento [cite: 10, 11, 12, 13]
-    let finalY = doc.lastAutoTable.finalY + 20;
-    doc.text("__________________________", 20, finalY);
-    doc.text("COORDENAÇÃO PEDAGÓGICA", 20, finalY + 5);
-    doc.text("__________________________", 180, finalY);
-    doc.text("SALA DE RECURSOS (AEE)", 180, finalY + 5);
+    // --- SEÇÃO 2 E 3: CALENDÁRIO E BIO ---
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 5,
+        head: [[{content: '2 - CALENDÁRIO DE EXECUÇÃO DO PEI', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        body: [
+            [{content: 'Delimitação Temporal: BIMESTRAL - 1º Bimestre', styles: {fontStyle: 'bold', cellWidth: 80}}, 
+             {content: `Avaliação Inicial:\n${aee.av_inicial || '-'}`, rowSpan: 2}],
+            [`Início: 19/01/2026\n1ª Revisão: 02/02/2026\n2ª Revisão: 22/04/2026`]
+        ],
+        theme: 'grid', styles: {fontSize: 7}
+    });
 
-    doc.save("PEI_Victor_Moises.pdf");
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY,
+        head: [[{content: '3 - Informações sobre o/a estudante', styles: {fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold'}}]],
+        body: [[aee.info || '-']],
+        theme: 'grid', styles: {fontSize: 7}
+    });
+
+    // --- SEÇÃO 4 E 5: DOCENTES E ORIENTAÇÃO ---
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 5,
+        head: [[{content: '4 - IDENTIFICAÇÃO DOS DOCENTES', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        body: [
+            [{content: `Nomes dos PROFESSORES REGENTES:\n${aee.docentes || '-'}`, colSpan: 2}],
+            [`Professor(a) AEE/SRM: ${aee.apoio || '-'}`, `Apoio Pedagógico Especializado: -`]
+        ],
+        theme: 'grid', styles: {fontSize: 7}
+    });
+
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY,
+        head: [[{content: '5 - ORIENTAÇÃO COLABORATIVA', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        body: [
+            [{content: `Família:\n${aee.orient_familia || '-'}`, styles: {cellWidth: 90}}, 
+             {content: `Orientações de outros profissionais:\n${aee.orient_outros || '-'}`, styles: {cellWidth: 90}}]
+        ],
+        theme: 'grid', styles: {fontSize: 7}
+    });
+
+    // --- SEÇÃO 6: CARACTERIZAÇÃO ---
+    doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 5,
+        head: [[{content: '6 - CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+        body: [
+            [{content: 'Potencialidades:', styles: {fontStyle: 'bold', textColor: [0, 100, 0]}}, 
+             {content: 'Dificuldades:', styles: {fontStyle: 'bold', textColor: [150, 0, 0]}}],
+            [{content: aee.potencial || '-'}, {content: aee.dificuldade || '-'}]
+        ],
+        theme: 'grid', styles: {fontSize: 7}
+    });
+
+    // --- DISCIPLINAS (Nova Página em Paisagem) ---
+    doc.addPage('a4', 'l');
+    doc.setFontSize(11).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO ADAPTADO", 148, 15, {align: 'center'});
+    
+    let curY = 25;
+    disciplinas.forEach(disc => {
+        const dadosDisc = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`));
+        if (dadosDisc && dadosDisc.u) {
+            if (curY > 170) { doc.addPage('a4', 'l'); curY = 20; }
+            doc.setFontSize(9).setFont(undefined, 'bold').text(disc, 14, curY);
+            doc.autoTable({
+                startY: curY + 2,
+                head: [['UNIDADES', 'OBJETOS', 'HAB. TURMA', 'HAB. PAEDE', 'METODOLOGIA', 'AVALIAÇÃO']],
+                body: [[dadosDisc.u, dadosDisc.o, dadosDisc.ht, dadosDisc.hp, dadosDisc.mt, dadosDisc.av]],
+                theme: 'grid', styles: {fontSize: 7}, headStyles: {fillColor: [40, 40, 40]}
+            });
+            curY = doc.lastAutoTable.finalY + 10;
+        }
+    });
+
+    // --- ASSINATURAS FINAIS ---
+    if (curY > 150) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
+    doc.setFontSize(8).text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, curY);
+    doc.line(20, curY + 20, 90, curY + 20); doc.text("Professor(a) AEE", 55, curY + 24, {align: 'center'});
+    doc.line(110, curY + 20, 180, curY + 20); doc.text("Professor(a) Regente", 145, curY + 24, {align: 'center'});
+    doc.line(200, curY + 20, 270, curY + 20); doc.text("Coordenação Pedagógica", 235, curY + 24, {align: 'center'});
+
+    doc.save(`PEI_2026_${AlunoAtual}.pdf`);
 }
