@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA PEI 2026 - SEDUC MT</title>
+    <title>SISTEMA PEI 2026 - SEDUC MT OFICIAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -30,7 +30,7 @@
         </div>
     </header>
 
-    <main class="container mx-auto max-w-5xl px-4 space-y-6">
+    <main class="container mx-auto max-w-6xl px-4 space-y-6">
         
         <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Selecione o Estudante:</label>
@@ -54,7 +54,7 @@
 
                 <div class="p-8 space-y-10">
                     <div class="space-y-4">
-                        <h3 class="text-blue-900 font-bold text-xs uppercase border-b-2 border-blue-900 pb-1">1 - Identificação do Estudante</h3>
+                        <h3 class="text-blue-900 font-bold text-xs uppercase border-b-2 border-blue-900 pb-1">1 - Identificação</h3>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div class="md:col-span-3"><label class="text-[10px] font-bold uppercase">Nome do Estudante:</label><input id="aee_nome" type="text" class="input-field"></div>
                             <div><label class="text-[10px] font-bold uppercase">Frequência:</label>
@@ -86,21 +86,21 @@
                     </div>
 
                     <div class="space-y-4">
-                        <h3 class="text-blue-900 font-bold text-xs uppercase border-b-2 border-blue-900 pb-1">4 e 5 - Identificação de Docentes e Família</h3>
+                        <h3 class="text-blue-900 font-bold text-xs uppercase border-b-2 border-blue-900 pb-1">4 e 5 - Docentes e Orientações</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label class="text-[10px] font-bold uppercase">Nomes dos Professores Regentes:</label><textarea id="aee_docentes" class="input-field h-24"></textarea></div>
+                            <div><label class="text-[10px] font-bold uppercase">Professores Regentes:</label><textarea id="aee_docentes" class="input-field h-24"></textarea></div>
                             <div><label class="text-[10px] font-bold uppercase">Professor AEE/SRM:</label><textarea id="aee_apoio" class="input-field h-24"></textarea></div>
                             <div><label class="text-[10px] font-bold uppercase">Orientação Família:</label><textarea id="aee_orient_familia" class="input-field h-24"></textarea></div>
                             <div><label class="text-[10px] font-bold uppercase">Outros Profissionais:</label><textarea id="aee_orient_outros" class="input-field h-24"></textarea></div>
                         </div>
                     </div>
-                    <button onclick="salvarAEE()" class="w-full bg-[#1f3864] text-white font-bold py-4 rounded-lg uppercase text-sm shadow-md">Salvar Dados da Sala de Recursos</button>
+                    <button onclick="salvarAEE()" class="w-full bg-[#1f3864] text-white font-bold py-4 rounded-lg uppercase text-sm shadow-md">Salvar Dados AEE</button>
                 </div>
             </div>
         </section>
 
         <section class="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
-            <h2 class="text-[#1f3864] font-bold uppercase text-sm mb-6 pb-2 border-b">Regência de Classe - Planejamento Adaptado</h2>
+            <h2 class="text-[#1f3864] font-bold uppercase text-sm mb-6 pb-2 border-b">Regência de Classe - Planejamento por Disciplina</h2>
             <select id="materiaAtiva" onchange="carregarMateria()" class="w-full md:w-96 p-3 border-2 border-emerald-100 rounded-lg font-bold text-emerald-800 mb-8 outline-none">
                 <optgroup label="I. LINGUAGENS">
                     <option value="LÍNGUA PORTUGUESA">LÍNGUA PORTUGUESA</option>
@@ -128,11 +128,11 @@
                 <div><label class="text-[10px] font-bold uppercase">Metodologia/Recursos Didáticos</label><textarea id="mt" class="input-field h-24"></textarea></div>
                 <div><label class="text-[10px] font-bold uppercase">Avaliação</label><textarea id="av" class="input-field h-24"></textarea></div>
             </div>
-            <button onclick="salvarMateria()" class="mt-8 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl uppercase text-sm shadow-md transition-all hover:bg-emerald-700">Salvar Registro</button>
+            <button onclick="salvarMateria()" class="mt-8 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl uppercase text-sm shadow-md">Salvar Registro de Disciplina</button>
         </section>
 
         <button onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
-            Gerar PDF PEI 2026 Completo
+            Gerar PDF PEI 2026 Completo (Paisagem)
         </button>
     </main>
 
@@ -148,76 +148,88 @@
         const camposAEE = ['nome','freq','alergia','nasc','ano','def','pais','av_inicial','info','potencial','dificuldade','docentes','orient_familia','apoio','orient_outros'];
 
         function toggleAEE() { document.getElementById('contentAEE').classList.toggle('content-expand'); document.getElementById('arrowAEE').classList.toggle('rotate-180'); }
-        function desbloquearAEE() { if(prompt("Senha da Sala de Recursos:") === SENHA_AEE) document.getElementById('overlayAEE').classList.add('hidden'); }
+        function desbloquearAEE() { if(prompt("Senha:") === SENHA_AEE) document.getElementById('overlayAEE').classList.add('hidden'); }
         function trocarEstudante() { AlunoAtual = document.getElementById('selectEstudante').value; if(!AlunoAtual) return; carregarAEE(); carregarMateria(); }
-        function salvarAEE() { if(!AlunoAtual) return alert("Selecione um aluno!"); let d = {}; camposAEE.forEach(c => d[c] = document.getElementById(`aee_${c}`).value); localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(d)); alert("Dados AEE Salvos!"); }
+        function salvarAEE() { if(!AlunoAtual) return alert("Selecione um aluno!"); let d = {}; camposAEE.forEach(c => d[c] = document.getElementById(`aee_${c}`).value); localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(d)); alert("AEE Salvo!"); }
         function carregarAEE() { const s = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {}; camposAEE.forEach(c => document.getElementById(`aee_${c}`).value = s[c] || ''); }
         function carregarMateria() { const m = document.getElementById('materiaAtiva').value; const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${m}`)) || {u:'',o:'',ht:'',hp:'',mt:'',av:''}; ['u','o','ht','hp','mt','av'].forEach(c => document.getElementById(c).value = s[c]); }
-        function salvarMateria() { if(!AlunoAtual) return alert("Selecione um aluno!"); const m = document.getElementById('materiaAtiva').value; const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value }; localStorage.setItem(`${AlunoAtual}_${m}`, JSON.stringify(d)); alert(`Registro de ${m} salvo!`); }
+        function salvarMateria() { if(!AlunoAtual) return alert("Selecione um aluno!"); const m = document.getElementById('materiaAtiva').value; const d = { u: document.getElementById('u').value, o: document.getElementById('o').value, ht: document.getElementById('ht').value, hp: document.getElementById('hp').value, mt: document.getElementById('mt').value, av: document.getElementById('av').value }; localStorage.setItem(`${AlunoAtual}_${m}`, JSON.stringify(d)); alert(`Salvo!`); }
 
         async function exportarPDF() {
             if(!AlunoAtual) return alert("Selecione um estudante!");
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
-
-            // CABEÇALHO FONTE 10 CENTRALIZADO
-            const logoImg = document.querySelector('header img');
-            if (logoImg) { try { const canvas = document.createElement("canvas"); canvas.width = logoImg.naturalWidth; canvas.height = logoImg.naturalHeight; canvas.getContext("2d").drawImage(logoImg, 0, 0); doc.addImage(canvas.toDataURL("image/png"), 'PNG', 85, 10, 40, 16); } catch(e) {} }
             
+            // PDF INTEIRO EM MODO PAISAGEM (L)
+            const doc = new jsPDF('l', 'mm', 'a4'); 
+            const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
+            const centroX = 148;
+
+            // CABEÇALHO OFICIAL FONTE 10
             doc.setFontSize(10).setFont('helvetica', 'bold');
-            doc.text("Governo do Estado de Mato Grosso", 105, 32, {align: 'center'});
-            doc.text("Secretaria de Estado de Educação - SEDUC", 105, 36, {align: 'center'});
-            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", 105, 40, {align: 'center'});
-            doc.text("Superintendência de Equidade e Inclusão - SUEI", 105, 44, {align: 'center'});
-            doc.text("Coordenadoria de Educação inclusiva – COEINC", 105, 48, {align: 'center'});
-            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", 105, 52, {align: 'center'});
+            doc.text("Governo do Estado de Mato Grosso", centroX, 15, {align: 'center'});
+            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, 20, {align: 'center'});
+            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, 25, {align: 'center'});
+            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, 30, {align: 'center'});
+            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, 35, {align: 'center'});
+            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, 40, {align: 'center'});
+            
+            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, 45, 277, 45);
+            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, 55, {align: 'center'});
 
-            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(15, 56, 195, 56);
-            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, 105, 66, {align: 'center'});
-
-            // SEÇÃO 1 - IDENTIFICAÇÃO
+            // 1 - IDENTIFICAÇÃO
             doc.autoTable({
-                startY: 72,
-                head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100], halign: 'center'}}]],
+                startY: 62,
+                head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100]}}]],
                 body: [
                     [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 3}],
                     [{content: `Frequência na Unidade Escolar: ${aee.freq || '-'}`}, {content: `( ) Infrequente  ( ) Regular  ( X ) Assíduo`, colSpan: 2}],
                     [{content: `Intolerância Alimentar / Alergia: ${aee.alergia || 'Não'}`, colSpan: 3}],
-                    [`Data de Nascimento:\n${aee.nasc || '-'}`, `Ano de escolaridade:\n${aee.ano || '-'}`, `Deficiência ou condição:\n${aee.def || '-'}`],
+                    [`Data de Nascimento: ${aee.nasc || '-'}`, `Ano de escolaridade: ${aee.ano || '-'}`, `Deficiência ou condição: ${aee.def || '-'}`],
                     [{content: `Pais ou responsável legal: ${aee.pais || '-'}`, colSpan: 3}]
                 ],
-                theme: 'grid', styles: {fontSize: 7.5}
+                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // CARACTERIZAÇÃO AEE
+            // 2 E 3
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 5,
-                head: [[{content: 'CARACTERIZAÇÃO E ORIENTAÇÕES AEE (Seções 2 a 6)', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
-                body: [
-                    [`Avaliação Inicial:\n${aee.av_inicial || '-'}`, `Informações:\n${aee.info || '-'}`],
-                    [`Potencialidades:\n${aee.potencial || '-'}`, `Dificuldades:\n${aee.dificuldade || '-'}`],
-                    [`Orientação Família:\n${aee.orient_familia || '-'}`, `Outros Profissionais:\n${aee.orient_outros || '-'}`]
-                ],
-                theme: 'grid', styles: {fontSize: 7.5}
+                head: [[{content: '2 – CALENDÁRIO DE EXECUÇÃO / 3 – INFORMAÇÕES DO ESTUDANTE', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+                body: [[{content: `Avaliação Inicial:\n${aee.av_inicial || '-'}`, styles: {cellWidth: 128}}, `Informações sobre o/a estudante:\n${aee.info || '-'}`]],
+                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // PLANEJAMENTO POR ÁREA (PAISAGEM)
+            // 4 E 5
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 5,
+                head: [[{content: '4 – IDENTIFICAÇÃO DOS DOCENTES', styles: {fillColor: [31, 56, 100]}}, {content: '5 – ORIENTAÇÃO COLABORATIVA', styles: {fillColor: [31, 56, 100]}}]],
+                body: [[`Professores Regentes: ${aee.docentes || '-'}\nProfessor AEE: ${aee.apoio || '-'}`, `Família: ${aee.orient_familia || '-'}\nOutros: ${aee.orient_outros || '-'}`]],
+                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
+            });
+
+            // 6 - CARACTERIZAÇÃO
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 5,
+                head: [[{content: '6 – CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
+                body: [[{content: `Potencialidades:\n${aee.potencial || '-'}`, styles: {cellWidth: 128}}, `Dificuldades:\n${aee.dificuldade || '-'}`]],
+                theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
+            });
+
+            // REGÊNCIA EM NOVA PÁGINA (TAMBÉM PAISAGEM)
             doc.addPage('a4', 'l');
-            doc.setFontSize(13).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO POR ÁREAS DE CONHECIMENTO", 148, 15, {align: 'center'});
+            doc.setFontSize(14).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO POR ÁREAS", centroX, 15, {align: 'center'});
             let curY = 25;
 
             areasConhecimento.forEach(area => {
-                if (curY > 180) { doc.addPage('a4', 'l'); curY = 20; }
-                doc.setFillColor(230, 230, 230).rect(14, curY, 269, 7, 'F');
-                doc.setFontSize(10).text(area.titulo, 16, curY + 5);
+                if (curY > 175) { doc.addPage('a4', 'l'); curY = 20; }
+                doc.setFillColor(230, 230, 230).rect(20, curY, 257, 7, 'F');
+                doc.setFontSize(10).text(area.titulo, 22, curY + 5);
                 curY += 12;
 
                 area.disciplinas.forEach(disc => {
                     const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
                     if (curY > 165) { doc.addPage('a4', 'l'); curY = 20; }
                     
-                    doc.setFontSize(9).setFont(undefined, 'bold').text(`${disc} / Assinatura do(a) Professor(a): __________________________________________________________________`, 14, curY);
+                    doc.setFontSize(9).setFont(undefined, 'bold').text(`${disc} / Assinatura do(a) Professor(a): __________________________________________________________________`, 20, curY);
                     
                     doc.autoTable({
                         startY: curY + 2,
@@ -225,7 +237,8 @@
                         body: [[s.u, s.o, s.ht, s.hp, s.mt, s.av]],
                         theme: 'grid', 
                         styles: {fontSize: 6, cellPadding: 2}, 
-                        headStyles: {fillColor: [31, 56, 100], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center'}
+                        headStyles: {fillColor: [31, 56, 100], textColor: [255, 255, 255], halign: 'center'},
+                        margin: {left: 20}
                     });
                     curY = doc.lastAutoTable.finalY + 12;
                 });
@@ -234,8 +247,8 @@
             // ASSINATURAS FINAIS
             if (curY > 160) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
             doc.setFontSize(8).setFont(undefined, 'normal');
-            doc.line(20, curY + 15, 90, curY + 15); doc.text("Professor(a) AEE", 55, curY + 19, {align: 'center'});
-            doc.line(110, curY + 15, 180, curY + 15); doc.text("Professor(a) Regente", 145, curY + 19, {align: 'center'});
+            doc.line(30, curY + 15, 100, curY + 15); doc.text("Professor(a) AEE", 65, curY + 19, {align: 'center'});
+            doc.line(115, curY + 15, 185, curY + 15); doc.text("Professor(a) Regente", 150, curY + 19, {align: 'center'});
             doc.line(200, curY + 15, 270, curY + 15); doc.text("Coordenação Pedagógica", 235, curY + 19, {align: 'center'});
 
             doc.save(`PEI_2026_${AlunoAtual}.pdf`);
