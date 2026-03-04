@@ -18,9 +18,8 @@
 </head>
 <body class="pb-20">
 
-    <header class="bg-white p-6 border-b-4 border-[#007a33] shadow-md mb-8 text-center">
-        <img src="mt.png" alt="Logo MT" class="h-16 mx-auto mb-4">
-        <div class="text-[10px] font-bold text-[#1f3864] uppercase leading-tight">
+    <header class="bg-white p-4 border-b-4 border-[#007a33] shadow-md mb-8 text-center">
+        <div class="text-[8px] font-bold text-[#1f3864] uppercase leading-tight tracking-wider">
             Governo do Estado de Mato Grosso<br>
             Secretaria de Estado de Educação - SEDUC<br>
             Secretaria Adjunta de Gestão Educacional - SAGE<br>
@@ -132,7 +131,7 @@
         </section>
 
         <button onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
-            Gerar PDF PEI 2026 Completo (Paisagem)
+            Gerar PDF PEI 2026 Completo (Paisagem Total)
         </button>
     </main>
 
@@ -164,21 +163,23 @@
             const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
             const centroX = 148;
 
-            // CABEÇALHO OFICIAL FONTE 10
-            doc.setFontSize(10).setFont('helvetica', 'bold');
-            doc.text("Governo do Estado de Mato Grosso", centroX, 15, {align: 'center'});
-            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, 20, {align: 'center'});
-            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, 25, {align: 'center'});
-            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, 30, {align: 'center'});
-            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, 35, {align: 'center'});
-            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, 40, {align: 'center'});
+            // CABEÇALHO DO PDF AJUSTADO (SÓ TEXTO, FONTE MENOR E MAIS JUNTO)
+            doc.setFontSize(8).setFont('helvetica', 'bold');
+            const hBaseY = 10;
+            const hEsp = 3.5; // Espaçamento vertical reduzido
+            doc.text("Governo do Estado de Mato Grosso", centroX, hBaseY, {align: 'center'});
+            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, hBaseY + hEsp, {align: 'center'});
+            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, hBaseY + hEsp*2, {align: 'center'});
+            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, hBaseY + hEsp*3, {align: 'center'});
+            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, hBaseY + hEsp*4, {align: 'center'});
+            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, hBaseY + hEsp*5, {align: 'center'});
             
-            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, 45, 277, 45);
-            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, 55, {align: 'center'});
+            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, hBaseY + hEsp*5 + 2, 277, hBaseY + hEsp*5 + 2);
+            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, hBaseY + hEsp*5 + 10, {align: 'center'});
 
             // 1 - IDENTIFICAÇÃO
             doc.autoTable({
-                startY: 62,
+                startY: hBaseY + hEsp*5 + 15,
                 head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100]}}]],
                 body: [
                     [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 3}],
