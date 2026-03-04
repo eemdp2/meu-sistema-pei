@@ -14,13 +14,13 @@
         .section-header { background-color: #1f3864; color: white; padding: 12px; font-weight: bold; text-transform: uppercase; font-size: 13px; cursor: pointer; }
         .content-collapse { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; background: white; }
         .content-expand { max-height: 5000px; transition: max-height 0.8s ease-in; }
+        #btnImprimir { display: none; } /* Botão oculto por padrão */
     </style>
 </head>
 <body class="pb-20">
 
-    <header class="bg-white p-6 border-b-4 border-[#007a33] shadow-md mb-8 text-center">
-        <img src="https://eemdp2.github.io/meu-sistema-pei/mt.png" alt="Logo MT" class="h-16 mx-auto mb-4">
-        <div class="text-[8px] text-[#1f3864] uppercase leading-tight">
+    <header class="bg-white p-4 border-b-4 border-[#007a33] shadow-md mb-8 text-center">
+        <div class="text-[8px] font-bold text-[#1f3864] uppercase leading-[1.1] tracking-wider">
             Governo do Estado de Mato Grosso<br>
             Secretaria de Estado de Educação - SEDUC<br>
             Secretaria Adjunta de Gestão Educacional - SAGE<br>
@@ -131,8 +131,8 @@
             <button onclick="salvarMateria()" class="mt-8 w-full bg-emerald-600 text-white font-bold py-4 rounded-xl uppercase text-sm shadow-md">Salvar Registro de Disciplina</button>
         </section>
 
-        <button onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
-            Gerar PDF PEI 2026 Completo (Paisagem)
+        <button id="btnImprimir" onclick="exportarPDF()" class="w-full bg-[#1f3864] text-white py-6 rounded-2xl font-bold uppercase text-xl shadow-2xl flex items-center justify-center gap-4 hover:scale-[1.01] transition-all">
+            Gerar PDF PEI 2026 Completo (Paisagem Total)
         </button>
     </main>
 
@@ -148,7 +148,14 @@
         const camposAEE = ['nome','freq','alergia','nasc','ano','def','pais','av_inicial','info','potencial','dificuldade','docentes','orient_familia','apoio','orient_outros'];
 
         function toggleAEE() { document.getElementById('contentAEE').classList.toggle('content-expand'); document.getElementById('arrowAEE').classList.toggle('rotate-180'); }
-        function desbloquearAEE() { if(prompt("Senha:") === SENHA_AEE) document.getElementById('overlayAEE').classList.add('hidden'); }
+        
+        function desbloquearAEE() { 
+            if(prompt("Senha:") === SENHA_AEE) {
+                document.getElementById('overlayAEE').classList.add('hidden');
+                document.getElementById('btnImprimir').style.display = 'flex'; // Exibe o botão de imprimir
+            } 
+        }
+
         function trocarEstudante() { AlunoAtual = document.getElementById('selectEstudante').value; if(!AlunoAtual) return; carregarAEE(); carregarMateria(); }
         function salvarAEE() { if(!AlunoAtual) return alert("Selecione um aluno!"); let d = {}; camposAEE.forEach(c => d[c] = document.getElementById(`aee_${c}`).value); localStorage.setItem(`aee_${AlunoAtual}`, JSON.stringify(d)); alert("AEE Salvo!"); }
         function carregarAEE() { const s = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {}; camposAEE.forEach(c => document.getElementById(`aee_${c}`).value = s[c] || ''); }
@@ -158,27 +165,25 @@
         async function exportarPDF() {
             if(!AlunoAtual) return alert("Selecione um estudante!");
             const { jsPDF } = window.jspdf;
-            
-            // PDF INTEIRO EM MODO PAISAGEM (L)
             const doc = new jsPDF('l', 'mm', 'a4'); 
             const aee = JSON.parse(localStorage.getItem(`aee_${AlunoAtual}`)) || {};
             const centroX = 148;
 
-            // CABEÇALHO OFICIAL FONTE 10
-            doc.setFontSize(10).setFont('helvetica', 'bold');
-            doc.text("Governo do Estado de Mato Grosso", centroX, 15, {align: 'center'});
-            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, 20, {align: 'center'});
-            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, 25, {align: 'center'});
-            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, 30, {align: 'center'});
-            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, 35, {align: 'center'});
-            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, 40, {align: 'center'});
+            doc.setFontSize(8).setFont('helvetica', 'bold');
+            const hBaseY = 10;
+            const hEsp = 3.5;
+            doc.text("Governo do Estado de Mato Grosso", centroX, hBaseY, {align: 'center'});
+            doc.text("Secretaria de Estado de Educação - SEDUC", centroX, hBaseY + hEsp, {align: 'center'});
+            doc.text("Secretaria Adjunta de Gestão Educacional - SAGE", centroX, hBaseY + hEsp*2, {align: 'center'});
+            doc.text("Superintendência de Equidade e Inclusão - SUEI", centroX, hBaseY + hEsp*3, {align: 'center'});
+            doc.text("Coordenadoria de Educação inclusiva – COEINC", centroX, hBaseY + hEsp*4, {align: 'center'});
+            doc.text("Centro de Apoio e Suporte à Inclusão - CASIES", centroX, hBaseY + hEsp*5, {align: 'center'});
             
-            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, 45, 277, 45);
-            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, 55, {align: 'center'});
+            doc.setDrawColor(31, 56, 100).setLineWidth(0.5).line(20, hBaseY + hEsp*5 + 2, 277, hBaseY + hEsp*5 + 2);
+            doc.setFontSize(12).text(`PLANO EDUCACIONAL INDIVIDUALIZADO - PEI 2026`, centroX, hBaseY + hEsp*5 + 10, {align: 'center'});
 
-            // 1 - IDENTIFICAÇÃO
             doc.autoTable({
-                startY: 62,
+                startY: hBaseY + hEsp*5 + 15,
                 head: [[{content: '1 - IDENTIFICAÇÃO DO ESTUDANTE', colSpan: 3, styles: {fillColor: [31, 56, 100]}}]],
                 body: [
                     [{content: `NOME DO ESTUDANTE: ${(aee.nome || AlunoAtual).toUpperCase()}`, colSpan: 3}],
@@ -190,7 +195,6 @@
                 theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // 2 E 3
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 5,
                 head: [[{content: '2 – CALENDÁRIO DE EXECUÇÃO / 3 – INFORMAÇÕES DO ESTUDANTE', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
@@ -198,7 +202,6 @@
                 theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // 4 E 5
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 5,
                 head: [[{content: '4 – IDENTIFICAÇÃO DOS DOCENTES', styles: {fillColor: [31, 56, 100]}}, {content: '5 – ORIENTAÇÃO COLABORATIVA', styles: {fillColor: [31, 56, 100]}}]],
@@ -206,7 +209,6 @@
                 theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // 6 - CARACTERIZAÇÃO
             doc.autoTable({
                 startY: doc.lastAutoTable.finalY + 5,
                 head: [[{content: '6 – CARACTERIZAÇÃO DA APRENDIZAGEM', colSpan: 2, styles: {fillColor: [31, 56, 100]}}]],
@@ -214,7 +216,6 @@
                 theme: 'grid', styles: {fontSize: 8}, margin: {left: 20}
             });
 
-            // REGÊNCIA EM NOVA PÁGINA (TAMBÉM PAISAGEM)
             doc.addPage('a4', 'l');
             doc.setFontSize(14).setFont(undefined, 'bold').text("REGÊNCIA DE CLASSE - PLANEJAMENTO POR ÁREAS", centroX, 15, {align: 'center'});
             let curY = 25;
@@ -228,9 +229,7 @@
                 area.disciplinas.forEach(disc => {
                     const s = JSON.parse(localStorage.getItem(`${AlunoAtual}_${disc}`)) || {u:'-',o:'-',ht:'-',hp:'-',mt:'-',av:'-'};
                     if (curY > 165) { doc.addPage('a4', 'l'); curY = 20; }
-                    
                     doc.setFontSize(9).setFont(undefined, 'bold').text(`${disc} / Assinatura do(a) Professor(a): __________________________________________________________________`, 20, curY);
-                    
                     doc.autoTable({
                         startY: curY + 2,
                         head: [['UNIDADES TEMÁTICAS', 'OBJETOS DE CONHECIMENTO', 'HABILIDADES ACADÊMICAS PARA A TURMA', 'HABILIDADES ACADÊMICAS PARA O ESTUDANTE PAEDE', 'METODOLOGIA/RECURSOS DIDÁTICOS', 'AVALIAÇÃO']],
@@ -244,7 +243,6 @@
                 });
             });
 
-            // ASSINATURAS FINAIS
             if (curY > 160) { doc.addPage('a4', 'l'); curY = 30; } else { curY += 10; }
             doc.setFontSize(8).setFont(undefined, 'normal');
             doc.line(30, curY + 15, 100, curY + 15); doc.text("Professor(a) AEE", 65, curY + 19, {align: 'center'});
